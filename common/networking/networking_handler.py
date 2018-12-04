@@ -1,11 +1,16 @@
-from common.networking.protocol import Communicate
+from common.networking.protocol import ClientFactory, ServiceFactory
 from twisted.internet import reactor
+from twisted.internet.endpoints import TCP4ClientEndpoint, TCP4ServerEndpoint
 
 class NetworkingHandler:
-    def __init__(self, name_key):
+    def __init__(self, key):
+        if key == "client":
+            self.factory = ClientFactory()
+        elif key == "service":
+            self.factory = ServiceFactory()
 
-        port_info = {"service": 1776, "client": 1777}
-
-        reactor.listenUDP(port_info[name_key], Communicate())
+        self.endpoint = TCP4ServerEndpoint(reactor, self.factory.port)
+        self.endpoint.listen(self.factory)
         reactor.run()
+
 
