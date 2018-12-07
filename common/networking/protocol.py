@@ -1,51 +1,51 @@
 from twisted.internet.protocol import DatagramProtocol
-from twisted.internet.protocol import Factory
-import time
+from twisted.internet import reactor
+from twisted.internet.task import LoopingCall
 
 
 class Client(DatagramProtocol):
-    def __init__(self, factory):
-        self.factory = factory
-        self.transport.connect(self.factory.host, self.factory.port)
+    def __init__(self, handler, host, port):
+        self.handler = handler
+        self.host = host
+        self.port = port
 
-    def datagramReceived(self, data, addr):
-        self.factory.packets += data
+    def datagramReceived(self, datagram, addr):
+        host = addr[0]
+        try:
+            self.handler.recv_data[host].append(datagram.decode())
+        except:
+            self.handler.recv_data[host] = []
+            self.handler.recv_data[host].append(datagram.decode())
 
-    def connect(self):
-        self.transport.write(b"connecting")
+        print(self.handler.recv_data)
+
+    def startProtocol(self):
+        pass
+
+    def stopProtocol(self):
+        pass
+
 
 class Service(DatagramProtocol):
-    def __init__(self, factory):
-        self.factory = factory
+    def __init__(self, handler, host, port):
+        self.handler = handler
+        self.host = host
+        self.port = port
+        self.loopObj = None
 
-    def datagramReceived(self, data, addr):
-        if addr not in self.factory.clients:
-            self.factory.clients += addr
-            print(addr)
+    def startProtocol(self):
+        self.loopObj = LoopingCall(self.sendMessage)
+        self.loopObj.start(2, now=False)
 
-    def sendData(self, data):
-        for client in self.factory.clients:
-            self.transport.write(bytes(data), ())
+    def stopProtocol(self):
+        pass
 
+    def sendMessage(self):
+        i = input("Message: ")
+        if i:
+            self.transport.write(i.encode(), ("127.0.0.2", self.port))
+        else:
+            pass
 
-class ClientFactory(Factory):
-    protocol = Client
-    host = "192.168.1.1"
-    port = 1777
-
-    def __init__(self):
-        self.packets = []
-
-    def buildProtocol(self, addr):
-        return Client(self)
-
-class ServiceFactory(Factory):
-    protocol = Service
-    host = "192.168.1.1"
-    port = 1776
-
-    def __init__(self):
-        self.clients = []
-
-    def buildProtocol(self, addr):
-        return Service(self)
+    def datagramReceived(self, datagram, addr):
+        print(datagram, addr)
