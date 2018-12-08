@@ -57,7 +57,7 @@ class Service(DatagramProtocol):
         self.loopObj = LoopingCall(self.send_data)
         self.loopObj.start(1, now=False)
 
-        self.loopObj = LoopingCall(self.sendMessage)
+        self.loopObj = LoopingCall(self.send_data)
         self.loopObj.start(2, now=False)
 
     def stopProtocol(self):
