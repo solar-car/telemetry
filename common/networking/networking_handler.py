@@ -1,4 +1,3 @@
-import threading
 from threading import Thread
 
 from twisted.internet import reactor

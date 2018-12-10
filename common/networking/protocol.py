@@ -14,10 +14,12 @@ class Packet:
     def decode(self):
         return self.data, self.timestamp
 
+
 class Connection:
     def __init__(self, addr, uptime_tick_at_creation):
         self.addr = addr
         self.last_packet_sent_tick = uptime_tick_at_creation
+
 
 class Client(DatagramProtocol):
     def __init__(self, handler, host, port, service_host):
@@ -31,7 +33,6 @@ class Client(DatagramProtocol):
         self.send_heartbeat_loop = LoopingCall(self.send_heartbeat)
         self.send_heartbeat_loop.start(1, now=False)
 
-
     def datagramReceived(self, datagram, addr):
         host = addr[0]
 
@@ -43,7 +44,6 @@ class Client(DatagramProtocol):
         except KeyError:
             self.handler.recv_data[host] = []
             self.handler.recv_data[host].append(deserialized_packet)
-
 
     def send_heartbeat(self):
         self.transport.write(b".", (self.service_host, self.port))
@@ -93,11 +93,9 @@ class Service(DatagramProtocol):
 
     def drop_inactive_connections(self):
         print(self.handler.connected_hosts)
-        for connection in self.handler.connected_hosts:
+        for connection in list(self.handler.connected_hosts):
             if self.uptime - self.handler.connected_hosts[connection].last_packet_sent_tick > 10:  # If more than 10 seconds have elapsed since the last heartbeat from the client
                 del self.handler.connected_hosts[connection]
 
     def increment_uptime(self):
         self.uptime += 1
-
-

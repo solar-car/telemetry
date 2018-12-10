@@ -1,18 +1,24 @@
 import sys
+from threading import Thread
+
 from PySide2.QtCore import SIGNAL, QObject
 from PySide2.QtWidgets import QApplication, QLabel, QTableView
 from PySide2.QtSql import QSqlRelationalTableModel
 
 
-class UserInterface:
+class UserInterface(Thread):
     def __init__(self):
+        Thread.__init__(self)
         self.back_end = BackEnd()
         self.front_end = FrontEnd(self.back_end)
 
-    def update(self, data):
+    def update(self, data=None):
         self.back_end.update_data(data)
         self.front_end.refresh()
 
+    def run(self):
+        while True:
+            self.update()
 
 class FrontEnd:
     def __init__(self, back_end):
