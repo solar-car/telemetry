@@ -12,3 +12,6 @@ class TelemetryService:
             i = input("Message: ")
             if i:
                 self.networking_handler.buffer.append(i)
+
+
+s = TelemetryService()

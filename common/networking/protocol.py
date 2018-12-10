@@ -3,7 +3,6 @@ import pickle
 import copy
 
 from twisted.internet.protocol import DatagramProtocol
-from twisted.internet import reactor
 from twisted.internet.task import LoopingCall
 
 
@@ -15,6 +14,10 @@ class Packet:
     def decode(self):
         return self.data, self.timestamp
 
+class Connection:
+    def __init__(self, addr, uptime_tick_at_creation):
+        self.addr = addr
+        self.last_packet_sent_tick = uptime_tick_at_creation
 
 class Client(DatagramProtocol):
     def __init__(self, handler, host, port, service_host):
@@ -22,7 +25,12 @@ class Client(DatagramProtocol):
         self.host = host
         self.port = port
         self.service_host = service_host
-        self.loopObj = None
+        self.send_heartbeat_loop = None
+
+    def startProtocol(self):
+        self.send_heartbeat_loop = LoopingCall(self.send_heartbeat)
+        self.send_heartbeat_loop.start(1, now=False)
+
 
     def datagramReceived(self, datagram, addr):
         host = addr[0]
@@ -36,13 +44,9 @@ class Client(DatagramProtocol):
             self.handler.recv_data[host] = []
             self.handler.recv_data[host].append(deserialized_packet)
 
-    def startProtocol(self):
-        self.loopObj = LoopingCall(self.send_heartbeat)
-        self.loopObj.start(1, now=False)
-        self.transport.connect(self.service_host, self.port)
 
     def send_heartbeat(self):
-        self.transport.write(b".")
+        self.transport.write(b".", (self.service_host, self.port))
 
 
 class Service(DatagramProtocol):
@@ -50,22 +54,33 @@ class Service(DatagramProtocol):
         self.handler = handler
         self.host = host
         self.port = port
-        self.loopObj = None
+
+        self.uptime = 0
+
+        self.send_data_loop = None
+        self.increment_uptime_loop = None
+        self.drop_inactive_connections_loop = None
 
     def startProtocol(self):
 
-        self.loopObj = LoopingCall(self.send_data)
-        self.loopObj.start(1, now=False)
+        self.send_data_loop = LoopingCall(self.send_data)
+        self.send_data_loop.start(1, now=False)
 
-        self.loopObj = LoopingCall(self.send_data)
-        self.loopObj.start(2, now=False)
+        self.increment_uptime_loop = LoopingCall(self.increment_uptime)
+        self.increment_uptime_loop.start(1, now=False)
+
+        self.drop_inactive_connections_loop = LoopingCall(self.drop_inactive_connections)
+        self.drop_inactive_connections_loop.start(10, now=False)
 
     def stopProtocol(self):
         pass
 
     def datagramReceived(self, datagram, addr):
-        if addr not in self.handler.connected_hosts:
-            self.handler.connected_hosts.append(addr)
+        if addr not in self.handler.connected_hosts.keys():
+            self.handler.connected_hosts[addr] = Connection(addr, self.uptime)
+
+        if datagram == b".":  # If datagram is a heartbeat
+            self.handler.connected_hosts[addr].last_packet_sent_tick = self.uptime
 
     def send_data(self):
         packet = Packet(copy.deepcopy(self.handler.buffer))  # Make a deep copy of the data
@@ -75,4 +90,14 @@ class Service(DatagramProtocol):
             for connected_host in self.handler.connected_hosts:
                 self.transport.write(serialized_packet, connected_host)
             self.handler.buffer.clear()
+
+    def drop_inactive_connections(self):
+        print(self.handler.connected_hosts)
+        for connection in self.handler.connected_hosts:
+            if self.uptime - self.handler.connected_hosts[connection].last_packet_sent_tick > 10:  # If more than 10 seconds have elapsed since the last heartbeat from the client
+                del self.handler.connected_hosts[connection]
+
+    def increment_uptime(self):
+        self.uptime += 1
+
 
