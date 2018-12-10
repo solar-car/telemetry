@@ -7,10 +7,11 @@ class Client:
     def __init__(self):
         self.name = "client"
 
+        self.user_interface = UserInterface()
+        self.user_interface.start()
+
         self.networking_handler = NetworkingHandler(self)
         self.networking_handler.start()
 
-        self.user_interface = UserInterface()
-        self.user_interface.start()
 
 client = Client()
