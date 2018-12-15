@@ -1,5 +1,5 @@
 from intermediary.module_handler import ModuleHandler
-from common.networking.networking_handler import NetworkingHandler
+from source.common.networking.networking_handler import NetworkingHandler
 
 
 class TelemetryService:

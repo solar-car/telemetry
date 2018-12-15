@@ -1,5 +1,5 @@
-from lowlevel.data_parser import DataParser
-from lowlevel.module import Module
+from source.common.utility.data_parser import DataParser
+from source.service.lowlevel.module import Module
 
 class ModuleHandler:
     def __init__(self):

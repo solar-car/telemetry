@@ -22,22 +22,28 @@ class Connection:
 
 
 class Client(DatagramProtocol):
-    def __init__(self, handler, host, port, service_host):
+    def __init__(self, handler, service_host, settings):
         self.handler = handler
-        self.host = host
-        self.port = port
+
         self.service_host = service_host
         self.send_heartbeat_loop = None
 
+        # Settings
+        self.port = settings["UDPport"]
+        self.server_url = settings["ServerURL"]
+        self.packet_size = settings["PacketSize"]
+        self.client_heartbeat_send_interval = settings["ClientHeartbeatSendInterval"]
+        self.heartbeat_message = settings["HeartbeatMessage"]
+
     def startProtocol(self):
         self.send_heartbeat_loop = LoopingCall(self.send_heartbeat)
-        self.send_heartbeat_loop.start(1, now=False)
+        self.send_heartbeat_loop.start(self.client_heartbeat_send_interval, now=False)
 
     def datagramReceived(self, datagram, addr):
         host = addr[0]
-
         deserialized_packet = pickle.loads(datagram)
         print(deserialized_packet.data)
+
         try:
             self.handler.recv_data[host].append(deserialized_packet)
 
@@ -46,14 +52,12 @@ class Client(DatagramProtocol):
             self.handler.recv_data[host].append(deserialized_packet)
 
     def send_heartbeat(self):
-        self.transport.write(b".", (self.service_host, self.port))
+        self.transport.write(self.heartbeat_message.encode(), (self.service_host, self.port))
 
 
 class Service(DatagramProtocol):
-    def __init__(self, handler, host, port):
+    def __init__(self, handler, settings):
         self.handler = handler
-        self.host = host
-        self.port = port
 
         self.uptime = 0
 
@@ -61,16 +65,25 @@ class Service(DatagramProtocol):
         self.increment_uptime_loop = None
         self.drop_inactive_connections_loop = None
 
+        # Settings
+        self.port = settings["UDPport"]
+        self.server_url = settings["ServerURL"]
+        self.packet_size = settings["PacketSize"]
+        self.time_before_disconnect = settings["MaxTimeBeforeDisconnect"]
+        self.check_inactive_connections_interval = settings["CheckInactiveConnectionsInterval"]
+        self.send_data_interval = settings["SendDataInterval"]
+        self.heartbeat_message = settings["HeartbeatMessage"]
+
     def startProtocol(self):
 
         self.send_data_loop = LoopingCall(self.send_data)
-        self.send_data_loop.start(1, now=False)
+        self.send_data_loop.start(self.send_data_interval, now=False)
 
         self.increment_uptime_loop = LoopingCall(self.increment_uptime)
-        self.increment_uptime_loop.start(1, now=False)
+        self.increment_uptime_loop.start(1, now=False)  # Increment uptime every second
 
         self.drop_inactive_connections_loop = LoopingCall(self.drop_inactive_connections)
-        self.drop_inactive_connections_loop.start(10, now=False)
+        self.drop_inactive_connections_loop.start(self.check_inactive_connections_interval, now=False)
 
     def stopProtocol(self):
         pass
@@ -79,7 +92,7 @@ class Service(DatagramProtocol):
         if addr not in self.handler.connected_hosts.keys():
             self.handler.connected_hosts[addr] = Connection(addr, self.uptime)
 
-        if datagram == b".":  # If datagram is a heartbeat
+        if datagram == self.heartbeat_message:  # If datagram is a heartbeat
             self.handler.connected_hosts[addr].last_packet_sent_tick = self.uptime
 
     def send_data(self):
@@ -92,9 +105,8 @@ class Service(DatagramProtocol):
             self.handler.buffer.clear()
 
     def drop_inactive_connections(self):
-        print(self.handler.connected_hosts)
         for connection in list(self.handler.connected_hosts):
-            if self.uptime - self.handler.connected_hosts[connection].last_packet_sent_tick > 10:  # If more than 10 seconds have elapsed since the last heartbeat from the client
+            if self.uptime - self.handler.connected_hosts[connection].last_packet_sent_tick > self.time_before_disconnect:
                 del self.handler.connected_hosts[connection]
 
     def increment_uptime(self):
