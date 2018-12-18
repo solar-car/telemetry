@@ -16,10 +16,12 @@ class UserInterface(Thread):
         self.front_end = FrontEnd()
         self.back_end.start_app()
 
+
 class FrontEnd:
     def __init__(self):
         self.main_window = QUiLoader().load("gui/main_window.ui")
         self.main_window.show()
+
 
 class BackEnd:
     def __init__(self):
