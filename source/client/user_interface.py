@@ -26,7 +26,10 @@ class UserInterface:
         self.server_connection_status_widget = self.main_window.findChild(QLabel, "server_connection_status")
         self.warning_display_widget = self.main_window.findChild(QTextBrowser, "warning_display")
         self.data_table_widget = self.main_window.findChild(QTableWidget, "data_table")
-        self.data_table_widget.setColumnCount(4)
+
+        for name in ["Value1, Value2, Value3, Status"]:
+            self.
+
         self.data_table_widget.setRowCount(4)
 
         self.horizontal_header = self.data_table_widget.horizontalHeader()
