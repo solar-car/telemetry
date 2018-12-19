@@ -32,7 +32,7 @@ class ClientUDP(DatagramProtocol):
 
     def datagramReceived(self, packet, addr):
         deserialized_packet = pickle.loads(packet)
-        self.handler.recieve_buffer.append(deserialized_packet)
+        self.handler.update_data(deserialized_packet)
 
     def send_heartbeat(self):
         self.transport.write(self.settings["HeartbeatMessage"].encode(), (self.service_host, self.settings["UDPPort"]))

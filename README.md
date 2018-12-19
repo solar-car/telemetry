@@ -19,8 +19,12 @@
    
         - *Service specific:*
                
-            - Raspberry Pi GPIO libraries
+            - Raspberry Pi GPIO libraries (eventually)
             
         - *Client specific:*
             
             - PySide2
+            
+**Architecture**
+
+![Architecture diagram](architecture.PNG)

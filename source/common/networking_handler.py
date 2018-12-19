@@ -17,7 +17,6 @@ class NetworkingHandler(Thread):
 
         if self.master.name == "client":  # Client specific code
             self.protocol = ClientUDP(self, "127.0.0.1")
-            self.receive_buffer = self.master.data_handler.server_recieved_data
 
         elif self.master.name == "service":  # Service specific code
 
@@ -28,6 +27,7 @@ class NetworkingHandler(Thread):
         reactor.listenUDP(self.settings["UDPPort"], self.protocol, interface=self.host_data[self.master.name])
         reactor.run(installSignalHandlers=False)
 
-
+    def update_data(self, data):
+        self.master.data_handler.append_data([data])
 
 

@@ -36,7 +36,7 @@ class UserInterface:
 
     def populate_data_table(self, module_data):
         for row_index, module in enumerate(module_data):
-            for column_index, value in enumerate(module):
+            for column_index, value in enumerate(module.data):
                 table_item = QTableWidgetItem(f"Label:\n{value}")
                 self.data_table_widget.setItem(row_index, column_index, table_item)
 
