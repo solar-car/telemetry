@@ -4,8 +4,7 @@ class Module:
         self.gpio_inputs = module_data[1]
         self.gpio_outputs = module_data[2]
 
-    def get_data(self):
-        pass
-    
-    def get_status(self):
-        pass
+        self.data = {}
+
+        for value in self.gpio_inputs:
+            self.data[value] = 0

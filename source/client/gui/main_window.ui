@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>640</width>
-    <height>481</height>
+    <width>747</width>
+    <height>480</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -27,45 +27,8 @@
     <property name="verticalSpacing">
      <number>6</number>
     </property>
-    <item row="0" column="0">
-     <widget class="QFrame" name="frame">
-      <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <property name="leftMargin">
-        <number>0</number>
-       </property>
-       <property name="topMargin">
-        <number>0</number>
-       </property>
-       <property name="rightMargin">
-        <number>0</number>
-       </property>
-       <property name="bottomMargin">
-        <number>0</number>
-       </property>
-       <item>
-        <widget class="QTableView" name="tableView">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="autoFillBackground">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
     <item row="0" column="1">
-     <widget class="QFrame" name="frame_2">
+     <widget class="QFrame" name="sidebar_frame">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
         <horstretch>0</horstretch>
@@ -74,31 +37,31 @@
       </property>
       <property name="minimumSize">
        <size>
-        <width>125</width>
+        <width>225</width>
         <height>0</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>125</width>
+        <width>225</width>
         <height>16777215</height>
        </size>
       </property>
       <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
+       <enum>QFrame::NoFrame</enum>
       </property>
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <property name="spacing">
-        <number>0</number>
+        <number>3</number>
        </property>
        <property name="leftMargin">
         <number>0</number>
        </property>
        <property name="topMargin">
-        <number>0</number>
+        <number>9</number>
        </property>
        <property name="rightMargin">
         <number>0</number>
@@ -111,7 +74,7 @@
          <property name="minimumSize">
           <size>
            <width>0</width>
-           <height>25</height>
+           <height>30</height>
           </size>
          </property>
          <property name="maximumSize">
@@ -124,7 +87,7 @@
           <string notr="true">background-color : lightgray</string>
          </property>
          <property name="text">
-          <string>Connection status:</string>
+          <string> Server connection:</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -132,7 +95,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="label_2">
+        <widget class="QLabel" name="server_connection_status">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -146,10 +109,10 @@
           </size>
          </property>
          <property name="styleSheet">
-          <string notr="true">color : red</string>
+          <string notr="true">color : gray</string>
          </property>
          <property name="text">
-          <string>Not connected</string>
+          <string>N/A</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -161,7 +124,7 @@
          <property name="minimumSize">
           <size>
            <width>0</width>
-           <height>25</height>
+           <height>30</height>
           </size>
          </property>
          <property name="maximumSize">
@@ -174,12 +137,12 @@
           <string notr="true">background-color : lightgray</string>
          </property>
          <property name="text">
-          <string>Uptime:</string>
+          <string> Raspberry Pi connection:</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="label_4">
+        <widget class="QLabel" name="pi_connection_status">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -192,8 +155,11 @@
            <height>25</height>
           </size>
          </property>
+         <property name="styleSheet">
+          <string notr="true">color: red</string>
+         </property>
          <property name="text">
-          <string>10h:5m:23s</string>
+          <string>Not connected</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -201,14 +167,103 @@
         </widget>
        </item>
        <item>
-        <widget class="QFrame" name="frame_4">
-         <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
+        <widget class="QLabel" name="label_5">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>30</height>
+          </size>
          </property>
-         <property name="frameShadow">
-          <enum>QFrame::Raised</enum>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color : lightgray</string>
+         </property>
+         <property name="text">
+          <string> Uptime:</string>
          </property>
         </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_7">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">color: black</string>
+         </property>
+         <property name="text">
+          <string>0h:0m:0s</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_6">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color : lightgray</string>
+         </property>
+         <property name="text">
+          <string> Warnings:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QTextBrowser" name="warnings_display"/>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QFrame" name="body_frame">
+      <property name="frameShape">
+       <enum>QFrame::NoFrame</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>9</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QTableWidget" name="data_table"/>
        </item>
       </layout>
      </widget>
@@ -220,8 +275,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>640</width>
-     <height>21</height>
+     <width>747</width>
+     <height>27</height>
     </rect>
    </property>
    <property name="defaultUp">

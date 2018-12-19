@@ -1,4 +1,4 @@
-from intermediary.module_handler import ModuleHandler
+from module_handler import ModuleHandler
 from source.common.networking.networking_handler import NetworkingHandler
 
 
