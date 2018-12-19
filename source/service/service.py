@@ -1,5 +1,5 @@
 from module_handler import ModuleHandler
-from source.common.networking.networking_handler import NetworkingHandler
+from source.common.networking_handler import NetworkingHandler
 
 
 class TelemetryService:
@@ -11,7 +11,7 @@ class TelemetryService:
         while True:
             i = input("Message: ")
             if i:
-                self.networking_handler.buffer.append(i)
+                self.networking_handler.send_buffer.append(i)
 
 
 s = TelemetryService()

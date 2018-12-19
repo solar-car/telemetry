@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>747</width>
-    <height>480</height>
+    <width>736</width>
+    <height>496</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -55,7 +55,7 @@
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <property name="spacing">
-        <number>3</number>
+        <number>5</number>
        </property>
        <property name="leftMargin">
         <number>0</number>
@@ -249,7 +249,7 @@
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout">
+      <layout class="QVBoxLayout" name="verticalLayout" stretch="0">
        <property name="leftMargin">
         <number>0</number>
        </property>
@@ -263,7 +263,32 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="QTableWidget" name="data_table"/>
+        <widget class="QTableWidget" name="data_table">
+         <property name="sizeAdjustPolicy">
+          <enum>QAbstractScrollArea::AdjustToContents</enum>
+         </property>
+         <property name="textElideMode">
+          <enum>Qt::ElideLeft</enum>
+         </property>
+         <property name="sortingEnabled">
+          <bool>true</bool>
+         </property>
+         <attribute name="horizontalHeaderCascadingSectionResizes">
+          <bool>true</bool>
+         </attribute>
+         <attribute name="horizontalHeaderStretchLastSection">
+          <bool>false</bool>
+         </attribute>
+         <attribute name="verticalHeaderCascadingSectionResizes">
+          <bool>true</bool>
+         </attribute>
+         <attribute name="verticalHeaderDefaultSectionSize">
+          <number>45</number>
+         </attribute>
+         <attribute name="verticalHeaderStretchLastSection">
+          <bool>false</bool>
+         </attribute>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -275,8 +300,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>747</width>
-     <height>27</height>
+     <width>736</width>
+     <height>21</height>
     </rect>
    </property>
    <property name="defaultUp">

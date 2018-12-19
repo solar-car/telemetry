@@ -1,4 +1,4 @@
-[Networking][UDPport][1776]
+[Networking][UDPPort][1776]
 [Networking][ServerURL]["a"]
 [Networking][PacketSize][1024]
 [Networking][PacketSendInterval][1]

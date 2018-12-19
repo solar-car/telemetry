@@ -1,12 +1,13 @@
 from threading import Thread
 
-from PySide2.QtWidgets import QApplication, QLabel, QTextBrowser, QTableWidget, QTableWidgetItem
+from PySide2.QtWidgets import QApplication, QLabel, QTextBrowser, QTableWidget, QTableWidgetItem, QHeaderView
 from PySide2.QtUiTools import QUiLoader
 
 
 class UserInterfaceHandler(Thread):
-    def __init__(self):
+    def __init__(self, master):
         Thread.__init__(self)
+        self.master = master
         self.user_interface = None
         self.qt_app = None
 
@@ -28,15 +29,15 @@ class UserInterface:
         self.data_table_widget.setColumnCount(4)
         self.data_table_widget.setRowCount(4)
 
-        self.populate_data_table([[1, 2, 3]])
+        self.horizontal_header = self.data_table_widget.horizontalHeader()
+        self.horizontal_header.setSectionResizeMode(QHeaderView.Stretch)
 
         self.main_window.show()
 
-    def populate_data_table(self, modules):
-        for row_index, module in enumerate(modules):
+    def populate_data_table(self, module_data):
+        for row_index, module in enumerate(module_data):
             for column_index, value in enumerate(module):
-                print(value)
-                table_item = QTableWidgetItem(value)
+                table_item = QTableWidgetItem(f"Label:\n{value}")
                 self.data_table_widget.setItem(row_index, column_index, table_item)
 
 
