@@ -4,7 +4,7 @@ from source.common.networking_handler import NetworkingHandler
 
 class TelemetryService:
     def __init__(self):
-        self.name = "service"
+        self.name = "Service"
         self.module_handler = ModuleHandler()
         self.networking_handler = NetworkingHandler(self)
         self.networking_handler.start()

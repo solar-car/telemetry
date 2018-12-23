@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Parameters>
+    <Modules>
+        <DHT11>
+            <GPIO_Output></GPIO_Output>
+            <GPIO_Input>4</GPIO_Input>
+        </DHT11>
+    </Modules>
+
+    <Networking>
+        <UDPPort>1776</UDPPort>
+        <ServerURL></ServerURL>
+        <PacketSize></PacketSize>
+        <PacketSendInterval>1</PacketSendInterval>
+        <ClientHeartbeatSendInterval>1</ClientHeartbeatSendInterval>
+        <MaxTimeBeforeDisconnect>10</MaxTimeBeforeDisconnect>
+        <CheckInactiveConnectionsInterval>10</CheckInactiveConnectionsInterval>
+        <HeartbeatMessage>.</HeartbeatMessage>
+        <SendDataInterval>1</SendDataInterval>
+        <ClientDebugHost>127.0.0.2</ClientDebugHost>
+        <ServiceDebugHost>127.0.0.1</ServiceDebugHost>
+    </Networking>
+</Parameters>

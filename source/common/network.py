@@ -1,9 +1,41 @@
 import time
 import pickle
 import copy
+from threading import Thread
 
 from twisted.internet.protocol import DatagramProtocol
 from twisted.internet.task import LoopingCall
+from twisted.internet import reactor
+
+
+class NetworkingHandler(Thread):
+    def __init__(self, name, settings):
+        """
+        Maintains the persistent state and data of network connections
+
+        :param name:
+            The type of application running, e.g. either client or service
+        """
+        Thread.__init__(self)
+        self.settings = settings
+        self.debug_host = self.settings[name + "DebugHost"]
+        self.name = name
+
+        self.send_buffer = []
+
+        if self.name == "Client":  # Client specific code
+            self.protocol = ClientUDP(self.settings)
+
+        elif self.name == "Service":  # Service specific code
+            self.connected_hosts = {}
+            self.protocol = ServiceUDP(self.settings)
+
+    def run(self):
+        reactor.listenUDP(self.settings["UDPPort"], self.protocol, interface=self.debug_host)
+        reactor.run(installSignalHandlers=False)
+
+    def update_data(self, data):
+        self.master.data_handler.append_data([data])
 
 
 class Packet:
@@ -19,11 +51,10 @@ class Connection:
 
 
 class ClientUDP(DatagramProtocol):
-    def __init__(self, handler, service_host):
-        self.handler = handler
-        self.settings = self.handler.settings
+    def __init__(self, settings):
+        self.settings = settings
 
-        self.service_host = service_host
+        self.service_host = self.settings["ServiceDebugHost"]
         self.send_heartbeat_loop = None
 
     def startProtocol(self):
@@ -73,7 +104,7 @@ class ServiceUDP(DatagramProtocol):
     def send_data(self):
         packet = Packet(copy.deepcopy(self.handler.send_buffer))  # Make a deep copy of the data
 
-        if len(packet.data) > 0 and len(self.handler.connected_hosts) > 0: # If there is buffered data and listening hosts
+        if len(packet.data) > 0 and len(self.handler.connected_hosts) > 0: # If there is data and listening hosts
             serialized_packet = pickle.dumps(packet)
             for connected_host in self.handler.connected_hosts:
                 self.transport.write(serialized_packet, connected_host)
