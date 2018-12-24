@@ -40,9 +40,10 @@ class UserInterface:
         for module in source:
             item = QStandardItem(module.name)
             root_item.appendRow(item)
-            for input in module.gpio_inputs:
-                sub_item = QStandardItem(input)
-                item.appendRow(sub_item)
+            for attribute in module.attributes:
+                attr_item = QStandardItem(attribute)
+                item.appendRow(attr_item)
+
         """
         for item in source:
             item = QStandardItem(item)

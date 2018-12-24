@@ -13,11 +13,13 @@ class Client:
 
         self.parser = Parser()
 
-        self.data_handler = DataHandler(self.parser.load_as_dictionary("Modules"))
+        module_data = self.parser.parse_xml_as_dictionary("Modules")
+        settings_data = self.parser.parse_xml_as_dictionary("Settings")
+        self.data_handler = DataHandler(module_data, settings_data)
 
         self.user_interface_handler = UserInterfaceHandler(self.data_handler.modules)
 
-        self.networking_handler = NetworkingHandler(self.name, self.parser.load_as_dictionary("Networking"))
+        self.networking_handler = NetworkingHandler(self.name, self.data_handler.settings["Networking"])
 
         # Start threads
         self.user_interface_handler.start()

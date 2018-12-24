@@ -9,23 +9,28 @@ class Parser:
     def __init__(self):
         self.path = "../../Data/Parameters.xml"
 
-    def load_as_dictionary(self, section_key):
-        data_dict = {}  # Dictionary to be returned
-        data_list = self.parse_xml()  # Load the data from the disk as a list
-        print(data_list.)
+    def parse_xml_as_dictionary(self, section_key):
+        parsed_data = {}
+        root = ElementTree.parse(self.path).getroot()
+        test = root.iter(section_key)
+        for element in test:
+            for subelement in element:
+                subelement_data = {}
+                for attribute in subelement:
+                    data = attribute.text.split(",") if attribute.text else None
+                    if data:
+                        try:
+                            data = [int(data) for data in data]
+                        except ValueError:
+                            pass
 
-        for line in data_list:
-            key = line[1]
-            data_dict[key] = []
-            for index, section in enumerate(line):
-                if index != 1 and index != 0:
-                    data_dict[key].append(section)
+                        if len(data) <= 1:
+                            data = data[0]
+                    subelement_data[attribute.tag] = data
 
-        print(data_dict)
-        return data_dict
+                parsed_data[subelement.tag] = subelement_data
 
-    def parse_xml(self):
-            return ElementTree.parse(self.path)
+        return parsed_data
 
 
 class Logger:
