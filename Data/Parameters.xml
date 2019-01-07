@@ -3,7 +3,8 @@
     <Modules>
         <DHT11>
             <GPIO_Output></GPIO_Output>
-            <GPIO_Input>4,3</GPIO_Input>
+            <GPIO_Input>4</GPIO_Input>
+            <Input4Unit>m/s</Input4Unit>
         </DHT11>
     </Modules>
 

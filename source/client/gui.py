@@ -21,6 +21,7 @@ class UserInterfaceHandler(Thread):
 
 class UserInterface:
     def __init__(self, data_source):
+        self.test = 0
         self.path = "main_window.ui"
         self.main_window = QUiLoader().load(self.path)
         self.pi_connection_status_widget = self.main_window.findChild(QLabel, "pi_connection_status")
@@ -38,11 +39,9 @@ class UserInterface:
         root_item = model.invisibleRootItem()
 
         for module in source:
-            item = QStandardItem(module.name)
+            item = QStandardItem(str(self.test))
             root_item.appendRow(item)
-            for attribute in module.attributes:
-                attr_item = QStandardItem(attribute)
-                item.appendRow(attr_item)
+
 
         """
         for item in source:

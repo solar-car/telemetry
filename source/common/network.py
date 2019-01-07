@@ -18,24 +18,25 @@ class NetworkingHandler(Thread):
         """
         Thread.__init__(self)
         self.settings = settings
+        print(self.settings)
         self.debug_host = self.settings[name + "DebugHost"]
         self.name = name
 
         self.send_buffer = []
 
         if self.name == "Client":  # Client specific code
-            self.protocol = ClientUDP(self.settings)
+            self.protocol = ClientUDP(self)
 
         elif self.name == "Service":  # Service specific code
             self.connected_hosts = {}
-            self.protocol = ServiceUDP(self.settings)
+            self.protocol = ServiceUDP(self)
 
     def run(self):
         reactor.listenUDP(self.settings["UDPPort"], self.protocol, interface=self.debug_host)
         reactor.run(installSignalHandlers=False)
 
     def update_data(self, data):
-        self.master.data_handler.append_data([data])
+        print(data)
 
 
 class Packet:
@@ -51,8 +52,9 @@ class Connection:
 
 
 class ClientUDP(DatagramProtocol):
-    def __init__(self, settings):
-        self.settings = settings
+    def __init__(self, handler):
+        self.handler = handler
+        self.settings = handler.settings
 
         self.service_host = self.settings["ServiceDebugHost"]
         self.send_heartbeat_loop = None
