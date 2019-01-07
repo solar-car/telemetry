@@ -23,9 +23,6 @@ class Parser:
                             data = [int(data) for data in data]
                         except ValueError:
                             pass
-
-                        if len(data) <= 1:
-                            data = data[0]
                     subelement_data[attribute.tag] = data
 
                 parsed_data[subelement.tag] = subelement_data

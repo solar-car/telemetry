@@ -3,6 +3,7 @@ from threading import Thread
 from PySide2.QtWidgets import QApplication, QLabel, QTreeView
 from PySide2.QtGui import QStandardItemModel, QStandardItem
 from PySide2.QtUiTools import QUiLoader
+import PySide2.QtCore
 
 
 class UserInterfaceHandler(Thread):
@@ -21,7 +22,6 @@ class UserInterfaceHandler(Thread):
 
 class UserInterface:
     def __init__(self, data_source):
-        self.test = 0
         self.path = "main_window.ui"
         self.main_window = QUiLoader().load(self.path)
         self.pi_connection_status_widget = self.main_window.findChild(QLabel, "pi_connection_status")
@@ -29,19 +29,26 @@ class UserInterface:
 
         self.data_tree_model = QStandardItemModel()
         self.data_tree_view = self.main_window.findChild(QTreeView, "tree_view")
-        self.data_tree_view.setModel(self.data_tree_model)
-
-        self.set_data_source(self.data_tree_model, data_source)
+        self.set_data_source(self.data_tree_view, self.data_tree_model, data_source)
+        self.format_model_table()
 
         self.main_window.show()
 
-    def set_data_source(self, model, source):
-        root_item = model.invisibleRootItem()
+    def format_model_table(self):
+        self.data_tree_model.setHeaderData(0, PySide2.QtCore.Qt.Horizontal, "Sensor")
+        self.data_tree_model.setHeaderData(1, PySide2.QtCore.Qt.Horizontal, "Min. Value")
+        self.data_tree_model.setHeaderData(2, PySide2.QtCore.Qt.Horizontal, "Max Value")
+
+    def set_data_source(self, view, model, source):
+        view.setModel(model)
 
         for module in source:
-            item = QStandardItem(str(self.test))
-            root_item.appendRow(item)
+            top_row = QStandardItem(module.name)
+            for input in module.gpio_inputs:
+                sensor = QStandardItem(str(input))
+                top_row.appendRow(sensor)
 
+            model.appendRow(top_row)
 
         """
         for item in source:
