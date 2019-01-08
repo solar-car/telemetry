@@ -18,6 +18,19 @@ class DataHandler:
 class Module:
     def __init__(self, name, module_data):
         self.name = name
+        self.sensors = {}
         self.attributes = module_data.keys()
+
         self.gpio_inputs = module_data["GPIO_Input"]
         self.gpio_outputs = module_data["GPIO_Output"]
+
+        for input in self.gpio_inputs:
+            self.sensors[input] = 0
+
+    def get_sensor_data(self):
+        for input in self.gpio_inputs:
+            self.gpio_inputs[input] = self.get_gpio_pin_data(input)
+
+    def get_gpio_pin_data(self, pin_no):
+        #  Placeholder until implementation of interfacing with the Raspberry Pi GPIO pins
+        return -1

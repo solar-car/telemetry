@@ -18,16 +18,13 @@ class NetworkingHandler(Thread):
         """
         Thread.__init__(self)
         self.settings = settings
-        print(self.settings)
         self.debug_host = self.settings[name + "DebugHost"]
-        self.name = name
-
         self.send_buffer = []
 
-        if self.name == "Client":  # Client specific code
+        if name == "Client":  # Client specific code
             self.protocol = ClientUDP(self)
 
-        elif self.name == "Service":  # Service specific code
+        elif name == "Service":  # Service specific code
             self.connected_hosts = {}
             self.protocol = ServiceUDP(self)
 
@@ -41,8 +38,8 @@ class NetworkingHandler(Thread):
 
 class Packet:
     def __init__(self, data):
-        self.timestamp = time.time()
         self.data = data
+        self.timestamp = time.time()
 
 
 class Connection:
@@ -55,9 +52,9 @@ class ClientUDP(DatagramProtocol):
     def __init__(self, handler):
         self.handler = handler
         self.settings = handler.settings
+        self.send_heartbeat_loop = None
 
         self.service_host = self.settings["ServiceDebugHost"]
-        self.send_heartbeat_loop = None
 
     def startProtocol(self):
         self.send_heartbeat_loop = LoopingCall(self.send_heartbeat)
@@ -75,7 +72,6 @@ class ServiceUDP(DatagramProtocol):
     def __init__(self, handler):
         self.handler = handler
         self.settings = handler.settings
-
         self.uptime = 0
 
         self.send_data_loop = None
