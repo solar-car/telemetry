@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
+ <class>main_window</class>
+ <widget class="QMainWindow" name="main_window">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -251,7 +251,13 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="QTreeView" name="tree_view"/>
+        <widget class="QTreeWidget" name="module_tree">
+         <column>
+          <property name="text">
+           <string notr="true">1</string>
+          </property>
+         </column>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -264,7 +270,7 @@
      <x>0</x>
      <y>0</y>
      <width>791</width>
-     <height>27</height>
+     <height>21</height>
     </rect>
    </property>
    <property name="defaultUp">
