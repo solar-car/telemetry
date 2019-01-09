@@ -39,7 +39,7 @@ class Parser:
         return subelement_data
 
     def restructure_data(self, data, return_type):
-        if return_type == ParserReturnType.DEFAULT:
+        if return_type == ParserReturnType.STRING_LIST:
             data = data  # Return as a list of strings
         elif return_type == ParserReturnType.STRING:
             data = data[0]

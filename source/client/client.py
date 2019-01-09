@@ -1,7 +1,7 @@
 from threading import Lock
 
 from source.common.network import NetworkingHandler
-from source.client.gui import UserInterfaceHandler
+from source.client.gui import UserInterface
 from source.common.data import DataHandler
 from source.common.file import Parser, ParserReturnType
 
@@ -19,8 +19,7 @@ class Client:
         self.networking_handler = NetworkingHandler(self.name, self.data_handler.settings["Networking"])
         self.networking_handler.start()
 
-        self.user_interface_handler = UserInterfaceHandler(self.data_handler.modules)
-        print(self.user_interface_handler)
+        self.user_interface = UserInterface(self.data_handler.modules)  # Takes control of main thread
 
 
 client = Client()
