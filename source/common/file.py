@@ -2,12 +2,11 @@ import datetime
 from enum import Enum
 from xml.etree import ElementTree
 
+from source.common.data import Sensor
+
 
 class Parser:
     # Specifies the form in which the data from the parser will be returned
-    class ReturnType(Enum):
-        STRING = 0  # Returns data as a string even if it can be further converted into an int
-        VALUE = 1  # Returns the data as an int if it can be converted and as a string otherwise
 
     class SectionKey(Enum):
         MODULES = "Modules"
@@ -16,27 +15,42 @@ class Parser:
     def __init__(self):
         self.path = "../../Data/Parameters.xml"
 
-    def parse_xml(self, section_key, return_type):
+    def parse_xml(self, section_key):
         xml_tree = ElementTree.parse(self.path)
         root = xml_tree.getroot()
 
         if section_key == self.SectionKey.MODULES:
-            return self.parse_modules(root.find("Modules"), return_type)
+            return self.parse_modules(root.find("Modules"))
         elif section_key == self.SectionKey.SETTINGS:
-            return self.parse_settings(root.find("Settings"), return_type)
+            return self.parse_settings(root.find("Settings"))
         else:
             raise ValueError("Section key not supported")
 
-    def parse_modules(self, tree, return_type):
+    def parse_modules(self, tree):
+        module_data = {}
         for module in tree:
-            print(list(module))
+            module_specific_data = {}
+            for sensor in module:
+                sensor_data = sensor.attrib
+                sensor_data["gpio_pin"] = int(sensor.text)
+                module_specific_data[sensor.tag] = sensor_data
+            module_data[module.tag] = module_specific_data
+        return module_data
 
-    def parse_settings(self, tree, return_type):
+    def parse_settings(self, tree):
         settings = {}
-        for setting in tree:
-            settings[setting.text] = ([list(setting))
+        for section in tree:
+            section_dict = {}
+            for setting in section:
+                setting_value = setting.text if setting.text else ""
+                try:
+                    setting_value = int(setting_value)
+                except ValueError:
+                    pass
 
-        print(settings)
+                section_dict[setting.tag] = setting_value
+            settings[section.tag] = section_dict
+        return settings
 
 
 class Logger:

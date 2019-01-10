@@ -3,6 +3,7 @@
     <Modules>
         <DHT11>
             <Temperature mode="Input" unit="C">4</Temperature>
+            <Test mode="Input" unit=":)">1</Test>
         </DHT11>
         <Example_Accelerometer>
             <Velocity mode="Input" unit="m/s">4</Velocity>
