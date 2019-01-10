@@ -2,16 +2,13 @@
 <Parameters>
     <Modules>
         <DHT11>
-            <GPIO_Output></GPIO_Output>
-            <GPIO_Input>4,2</GPIO_Input>
-            <Input4Unit>m/s</Input4Unit>
+            <Temperature mode="Input" unit="C">4</Temperature>
         </DHT11>
-        <Test>
-            <GPIO_Output></GPIO_Output>
-            <GPIO_Input>4</GPIO_Input>
-        </Test>
+        <Example_Accelerometer>
+            <Velocity mode="Input" unit="m/s">4</Velocity>
+            <Debug mode="Output" unit=":)">32</Debug>
+        </Example_Accelerometer>
     </Modules>
-
     <Settings>
         <Networking>
             <UDPPort>1776</UDPPort>

@@ -3,55 +3,40 @@ from enum import Enum
 from xml.etree import ElementTree
 
 
-# Specifies the form in which the data from the parser will be returned
-class ParserReturnType(Enum):
-    STRING_LIST = 0  # List of strings
-    STRING = 1  # Singular string
-    CONVERTED_STRING = 2  # Singular string or integer value as appropriate, used for settings
-
-
 class Parser:
-    """
-    Loads application data from the disk
-    """
+    # Specifies the form in which the data from the parser will be returned
+    class ReturnType(Enum):
+        STRING = 0  # Returns data as a string even if it can be further converted into an int
+        VALUE = 1  # Returns the data as an int if it can be converted and as a string otherwise
+
+    class SectionKey(Enum):
+        MODULES = "Modules"
+        SETTINGS = "Settings"
+
     def __init__(self):
         self.path = "../../Data/Parameters.xml"
 
-    def parse_xml_as_dictionary(self, section_key, return_type=ParserReturnType.STRING_LIST):
-        parsed_data = {}
-        root = ElementTree.parse(self.path).getroot()
-        test = root.iter(section_key)
-        for element in test:
-            for subelement in element:
-                parsed_data[subelement.tag] = self.parse_xml_subelement(subelement, return_type)
+    def parse_xml(self, section_key, return_type):
+        xml_tree = ElementTree.parse(self.path)
+        root = xml_tree.getroot()
 
-        return parsed_data
-
-    def parse_xml_subelement(self, subelement, return_type):
-        subelement_data = {}
-        for attribute in subelement:
-            data = attribute.text.split(",") if attribute.text else None
-            if data:
-                data = self.restructure_data(data, return_type)
-
-            subelement_data[attribute.tag] = data
-
-        return subelement_data
-
-    def restructure_data(self, data, return_type):
-        if return_type == ParserReturnType.STRING_LIST:
-            data = data  # Return as a list of strings
-        elif return_type == ParserReturnType.STRING:
-            data = data[0]
-        elif return_type == ParserReturnType.CONVERTED_STRING:
-            try:
-                data = int(data[0])
-            except ValueError:
-                data = data[0]
+        if section_key == self.SectionKey.MODULES:
+            return self.parse_modules(root.find("Modules"), return_type)
+        elif section_key == self.SectionKey.SETTINGS:
+            return self.parse_settings(root.find("Settings"), return_type)
         else:
-            raise ValueError("Enumerate value not defined")
+            raise ValueError("Section key not supported")
 
-        return data
+    def parse_modules(self, tree, return_type):
+        for module in tree:
+            print(list(module))
+
+    def parse_settings(self, tree, return_type):
+        settings = {}
+        for setting in tree:
+            settings[setting.text] = ([list(setting))
+
+        print(settings)
 
 
 class Logger:

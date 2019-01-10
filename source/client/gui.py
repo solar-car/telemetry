@@ -28,17 +28,20 @@ class UserInterface:
         for module in module_data:
             tree_item = QTreeWidgetItem([module.name, "", "", "", ""])
             self.module_tree_widget.addTopLevelItem(tree_item)
+            tree_item.setExpanded(True)
             for sensor in module.sensors:
                 sub_tree_item = QTreeWidgetItem([sensor, "debug", "debug", "debug", "debug"])
                 tree_item.addChild(sub_tree_item)
 
     def update_module_tree(self, module_data):
+        print(module_data[0].sensors)
         root = self.module_tree_widget.invisibleRootItem()
         modules = self.iterate_over_subitems(root)
         for module in modules:
+            module_identifier = module.text(0)
             sensors = self.iterate_over_subitems(module)
             for sensor in sensors:
-                sensor.setData(0, Qt.ItemDataRole.DisplayRole, "test")
+                sensor.setData(0, Qt.ItemDataRole.DisplayRole, "Temperature")
 
     def iterate_over_subitems(self, item):
         subitems = []

@@ -1,3 +1,6 @@
+from enum import Enum
+
+
 class DataHandler:
     """
     Manages the data and state of the application
@@ -34,3 +37,14 @@ class Module:
     def get_gpio_pin_data(self, pin_no):
         #  Placeholder until implementation of interfacing with the Raspberry Pi GPIO pins
         return -1
+
+
+class Sensor:
+    class Mode(Enum):
+        INPUT = 0
+        OUTPUT = 1
+
+    def __init__(self, gpio_pin, mode, label):
+        self.gpio_pin = gpio_pin
+        self.mode = mode
+        self.label = label
