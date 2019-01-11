@@ -30,18 +30,25 @@ class UserInterface:
             self.module_tree_widget.addTopLevelItem(tree_item)
             tree_item.setExpanded(True)
             for sensor in module.sensors:
-                sub_tree_item = QTreeWidgetItem([sensor, "debug", "debug", "debug", "debug"])
+                sub_tree_item = QTreeWidgetItem()
+                if type(sensor.value) == int:
+                    sub_tree_item = QTreeWidgetItem([sensor, str(sensor.value), str(sensor.value), str(sensor.value), ""])
+                elif type(sensor.value) == str:
+                    sub_tree_item = QTreeWidgetItem([sensor, sensor.value, "", "", ""])
+                sensor.gui_reference = sub_tree_item
                 tree_item.addChild(sub_tree_item)
 
     def update_module_tree(self, module_data):
-        print(module_data[0].sensors)
-        root = self.module_tree_widget.invisibleRootItem()
-        modules = self.iterate_over_subitems(root)
-        for module in modules:
-            module_identifier = module.text(0)
-            sensors = self.iterate_over_subitems(module)
-            for sensor in sensors:
-                sensor.setData(0, Qt.ItemDataRole.DisplayRole, "Temperature")
+        for module in module_data:
+            for sensor in module.sensors:
+                sensor.gui_reference.setData(1, Qt.ItemDataRole.DisplayRole, str(sensor.value))
+                if type(sensor.value) == int:
+                    if sensor.value < int(sensor.gui_reference.data(2, Qt.ItemDataRole.DisplayRole)):
+                        sensor.gui_reference.setData(2, Qt.ItemDataRole.DisplayRole, str(sensor.value))
+
+                    elif sensor.value > int(sensor.gui_reference.data(3, Qt.ItemDataRole.DisplayRole)):
+                        sensor.gui_reference.setData(3, Qt.ItemDataRole.DisplayRole, str(sensor.value))
+                sensor.gui_reference.setData(4, Qt.ItemDataRole.DisplayRole, sensor.status)
 
     def iterate_over_subitems(self, item):
         subitems = []

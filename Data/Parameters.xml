@@ -10,6 +10,7 @@
             <Debug mode="Output" unit=":)">32</Debug>
         </Example_Accelerometer>
     </Modules>
+
     <Settings>
         <Networking>
             <UDPPort>1776</UDPPort>

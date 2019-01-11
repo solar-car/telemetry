@@ -21,5 +21,4 @@ class Client:
 
         self.user_interface = UserInterface(self.data_handler.modules)  # Takes control of main thread
 
-
 client = Client()
