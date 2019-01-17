@@ -12,8 +12,8 @@ class Client:
         self.thread_lock = Lock()
 
         self.parser = Parser()
-        module_data = self.parser.parse_xml(Parser.SectionKey.MODULES)
-        settings_data = self.parser.parse_xml(Parser.SectionKey.SETTINGS)
+        module_data = self.parser.parse_xml("Modules")
+        settings_data = self.parser.parse_xml("Settings")
 
         self.data_handler = DataHandler(module_data, settings_data)
         self.networking_handler = NetworkingHandler(self.name, self.data_handler.settings["Networking"])
