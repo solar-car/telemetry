@@ -5,7 +5,7 @@ from PySide2.QtWidgets import QApplication, QLabel, QTreeView
 from PySide2.QtUiTools import QUiLoader
 from PySide2.QtCore import QAbstractItemModel, QModelIndex, Qt
 from PySide2.QtGui import QStandardItemModel, QStandardItem
-from PySide2.QtWidgets import QTreeWidget, QMainWindow, QTreeWidgetItem
+from PySide2.QtWidgets import QTreeWidget, QMainWindow, QTreeWidgetItem, QHeaderView, QAction
 
 
 class UserInterface(Thread):
@@ -21,6 +21,9 @@ class UserInterface(Thread):
         self.initialize_module_tree(modules)
         self.update_module_tree(modules)
 
+        self.menu_readme_action = self.context.findChild(QAction, "open_readme")
+        self.menu_readme_action.triggered.connect(MenuActions.action_open_readme)
+
         self.context.show()
 
         self.qt_app.exec_()
@@ -28,6 +31,9 @@ class UserInterface(Thread):
     def initialize_module_tree(self, module_data):
         self.module_tree_widget.setColumnCount(5)
         self.module_tree_widget.setHeaderLabels(["Sensor", "Value", "Min", "Max", "Status"])
+
+        header = self.module_tree_widget.header()
+
         for module in module_data:
             tree_item = QTreeWidgetItem([module.name, "", "", "", ""])
             self.module_tree_widget.addTopLevelItem(tree_item)
@@ -61,4 +67,12 @@ class UserInterface(Thread):
         return subitems
 
 
+class MenuActions:
+    def action_open_readme(self):
+        pass
 
+    def action_open_github_repo(self):
+        pass
+
+    def action_open_settings(self):
+        pass

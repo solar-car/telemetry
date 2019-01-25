@@ -276,25 +276,42 @@
    <property name="defaultUp">
     <bool>false</bool>
    </property>
-   <widget class="QMenu" name="menuConnection">
-    <property name="title">
-     <string>View</string>
-    </property>
-   </widget>
-   <widget class="QMenu" name="menuSettings">
+   <widget class="QMenu" name="menu_settings">
     <property name="title">
      <string>Settings</string>
     </property>
+    <addaction name="developer"/>
    </widget>
-   <widget class="QMenu" name="menuHelp">
+   <widget class="QMenu" name="menu_help">
     <property name="title">
      <string>Help</string>
     </property>
+    <addaction name="open_readme"/>
+    <addaction name="github_repo"/>
    </widget>
-   <addaction name="menuConnection"/>
-   <addaction name="menuSettings"/>
-   <addaction name="menuHelp"/>
+   <addaction name="menu_settings"/>
+   <addaction name="menu_help"/>
   </widget>
+  <action name="open_readme">
+   <property name="text">
+    <string>README</string>
+   </property>
+  </action>
+  <action name="github_repo">
+   <property name="text">
+    <string>GitHub Repository</string>
+   </property>
+  </action>
+  <action name="developer">
+   <property name="text">
+    <string>Developer</string>
+   </property>
+  </action>
+  <action name="theme">
+   <property name="text">
+    <string>Theme</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

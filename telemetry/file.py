@@ -6,10 +6,6 @@ from xml.etree import ElementTree
 class Parser:
     # Specifies the form in which the data from the parser will be returned
 
-    class SectionKey(Enum):
-        MODULES = "Modules"
-        SETTINGS = "Settings"
-
     def __init__(self):
         self.path = "../../Parameters.xml"
 
@@ -17,10 +13,10 @@ class Parser:
         xml_tree = ElementTree.parse(self.path)
         root = xml_tree.getroot()
 
-        if section_key == self.SectionKey.MODULES:
-            return self.parse_modules(root.find("Modules"))
-        elif section_key == self.SectionKey.SETTINGS:
-            return self.parse_settings(root.find("Settings"))
+        if section_key == "Modules":
+            return self.parse_modules(root.find(section_key))
+        elif section_key == "Settings":
+            return self.parse_settings(root.find(section_key))
         else:
             raise ValueError("Section key not supported")
 
