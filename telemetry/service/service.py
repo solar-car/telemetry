@@ -1,6 +1,6 @@
-from source.common.network import NetworkingHandler
-from source.common.data import DataHandler
-from source.common.file import Parser
+from telemetry.network import NetworkingHandler
+from telemetry.data import DataHandler
+from telemetry.file import Parser
 
 
 class TelemetryService:

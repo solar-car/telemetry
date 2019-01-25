@@ -1,3 +1,5 @@
+from threading import Thread
+
 from PySide2.QtWidgets import QApplication, QLabel, QTreeView
 
 from PySide2.QtUiTools import QUiLoader
@@ -6,10 +8,11 @@ from PySide2.QtGui import QStandardItemModel, QStandardItem
 from PySide2.QtWidgets import QTreeWidget, QMainWindow, QTreeWidgetItem
 
 
-class UserInterface:
+class UserInterface(Thread):
     def __init__(self, modules):
+        Thread.__init__(self)
         self.qt_app = QApplication()
-        self.context = QUiLoader().load("main_window.ui")
+        self.context = QUiLoader().load("Data/main_window.ui")
 
         #  References to widgets defined in the .ui file
         self.pi_connection_status_widget = self.context.findChild(QLabel, "pi_connection_status")

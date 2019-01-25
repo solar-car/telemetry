@@ -2,8 +2,6 @@ import datetime
 from enum import Enum
 from xml.etree import ElementTree
 
-from source.common.data import Sensor
-
 
 class Parser:
     # Specifies the form in which the data from the parser will be returned
@@ -13,7 +11,7 @@ class Parser:
         SETTINGS = "Settings"
 
     def __init__(self):
-        self.path = "../../Data/Parameters.xml"
+        self.path = "../../Parameters.xml"
 
     def parse_xml(self, section_key):
         xml_tree = ElementTree.parse(self.path)
