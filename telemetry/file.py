@@ -1,26 +1,23 @@
 import datetime
-from enum import Enum
 from xml.etree import ElementTree
 
 
 class Parser:
-    # Specifies the form in which the data from the parser will be returned
-
-    def __init__(self):
-        self.path = "../../Parameters.xml"
-
-    def parse_xml(self, section_key):
-        xml_tree = ElementTree.parse(self.path)
+    @staticmethod
+    def parse_xml(section_key):
+        path = "../Parameters.xml"
+        xml_tree = ElementTree.parse(path)
         root = xml_tree.getroot()
 
         if section_key == "Modules":
-            return self.parse_modules(root.find(section_key))
+            return Parser.parse_modules(root.find(section_key))
         elif section_key == "Settings":
-            return self.parse_settings(root.find(section_key))
+            return Parser.parse_settings(root.find(section_key))
         else:
             raise ValueError("Section key not supported")
 
-    def parse_modules(self, tree):
+    @staticmethod
+    def parse_modules(tree):
         module_data = {}
         for module in tree:
             module_specific_data = {}
@@ -31,7 +28,8 @@ class Parser:
             module_data[module.tag] = module_specific_data
         return module_data
 
-    def parse_settings(self, tree):
+    @staticmethod
+    def parse_settings(tree):
         settings = {}
         for section in tree:
             section_dict = {}
@@ -48,14 +46,10 @@ class Parser:
 
 
 class Logger:
-    """
-    Writes received data to the disk
-    """
-    def __init__(self):
-        self.path = "../../Data/Log.txt"
-
-    def log_data(self, data):
-        with open(self.path, 'a') as file:
+    @staticmethod
+    def log_data(data):
+        path = "../../Data/Log.txt"
+        with open(path, 'a') as file:
             timestamp = datetime.datetime.now()
             file.write(f"{data} :: {timestamp}" + '\n')
 

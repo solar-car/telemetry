@@ -1,4 +1,3 @@
-import time
 import pickle
 import copy
 from threading import Thread
@@ -7,26 +6,19 @@ from twisted.internet.protocol import DatagramProtocol
 from twisted.internet.task import LoopingCall
 from twisted.internet import reactor
 
+from telemetry.common_network import Packet, Connection
 
-class NetworkingHandler(Thread):
-    def __init__(self, name, settings):
-        """
-        Maintains the persistent state and data of network connections
 
-        :param name:
-            The type of application running, e.g. either client or service
-        """
+class ServiceNetworkingHandler(Thread):
+    def __init__(self, state_handler):
         Thread.__init__(self)
-        self.settings = settings
-        self.debug_host = self.settings[name + "DebugHost"]
+        self.state_handler = state_handler
+        self.settings = self.state_handler.settings["Networking"]
+        self.debug_host = self.settings["ServiceDebugHost"]
         self.send_buffer = []
 
-        if name == "Client":  # Client specific code
-            self.protocol = ClientUDP(self)
-
-        elif name == "Service":  # Service specific code
-            self.connected_hosts = {}
-            self.protocol = ServiceUDP(self)
+        self.connected_hosts = {}
+        self.protocol = ServiceUDP(self)
 
     def run(self):
         reactor.listenUDP(self.settings["UDPPort"], self.protocol, interface=self.debug_host)
@@ -34,38 +26,6 @@ class NetworkingHandler(Thread):
 
     def update_data(self, data):
         print(data)
-
-
-class Packet:
-    def __init__(self, data):
-        self.data = data
-        self.timestamp = time.time()
-
-
-class Connection:
-    def __init__(self, addr, uptime_tick_at_creation):
-        self.addr = addr
-        self.last_packet_sent_tick = uptime_tick_at_creation
-
-
-class ClientUDP(DatagramProtocol):
-    def __init__(self, handler):
-        self.handler = handler
-        self.settings = handler.settings
-        self.send_heartbeat_loop = None
-
-        self.service_host = self.settings["ServiceDebugHost"]
-
-    def startProtocol(self):
-        self.send_heartbeat_loop = LoopingCall(self.send_heartbeat)
-        self.send_heartbeat_loop.start(self.settings["ClientHeartbeatSendInterval"], now=False)
-
-    def datagramReceived(self, packet, addr):
-        deserialized_packet = pickle.loads(packet)
-        self.handler.update_data(deserialized_packet)
-
-    def send_heartbeat(self):
-        self.transport.write(self.settings["HeartbeatMessage"].encode(), (self.service_host, self.settings["UDPPort"]))
 
 
 class ServiceUDP(DatagramProtocol):

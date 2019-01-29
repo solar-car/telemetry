@@ -1,20 +1,14 @@
-from telemetry.network import NetworkingHandler
-from telemetry.data import DataHandler
-from telemetry.file import Parser
+from telemetry.service.service_network import ServiceNetworkingHandler
+from telemetry.service.service_state import ServiceStateHandler
 
 
 class TelemetryService:
     def __init__(self):
-        self.name = "Service"
-        self.parser = Parser()
+        self.state_handler = ServiceStateHandler()
 
-        self.module_data = self.parser.parse_xml("Modules")
-        self.settings = self.parser.parse_xml("Settings")
-        print(self.settings)
-
-        self.data_handler = DataHandler(self.module_data, self.settings)
-        self.networking_handler = NetworkingHandler(self.name, self.settings["Networking"])
+        self.networking_handler = ServiceNetworkingHandler(self.state_handler)
         self.networking_handler.start()
+
         while True:
             i = input("Message: ")
             if i:

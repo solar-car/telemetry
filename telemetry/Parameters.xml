@@ -25,5 +25,10 @@
             <ClientDebugHost>127.0.0.2</ClientDebugHost>
             <ServiceDebugHost>127.0.0.1</ServiceDebugHost>
         </Networking>
+        <Security>
+            <!--Possible modes are "Disabled", "Insecure" (passwords), and "Secure" (RSA key).
+                Note that changing this will only work if the server is configured to the same mode as specified.-->
+            <AuthenticationMode>Secure</AuthenticationMode>
+        </Security>
     </Settings>
 </Parameters>

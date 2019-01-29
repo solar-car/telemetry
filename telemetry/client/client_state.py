@@ -1,17 +1,26 @@
 from enum import Enum
 
+from telemetry.file import Parser
 
-class DataHandler:
+
+class ClientStateHandler:
     """
-    Manages the data and state of the application
+    Maintains the persistent state and data of the application
     """
-    def __init__(self, module_data, settings):
+    def __init__(self):
+        # Data storage
         self.modules = []
+
+        # Flags and other settings in XML form
+        self.module_data = Parser.parse_xml("Modules")
+        self.settings = Parser.parse_xml("Settings")
+
+        # Flags that can only be deduced at runtime
         self.server_connection_status = False
         self.raspberry_pi_connection_status = False
-        self.settings = settings
+        self.rsa_key_exists = False
 
-        self.create_modules(module_data)
+        self.create_modules(self.module_data)
 
     def create_modules(self, module_data):
         for module_name in module_data:
