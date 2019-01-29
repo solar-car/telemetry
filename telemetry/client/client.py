@@ -13,7 +13,7 @@ class Client:
         self.name = "Client"
         self.thread_lock = Lock()
 
-        test = AuthenticationManager()
+        self.auth_manager = AuthenticationManager()
 
         self.parser = Parser()
         module_data = self.parser.parse_xml("Modules")
