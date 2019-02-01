@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
+<!--
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+General reminder for editing: make sure to exclude potentially sensitive information before pushing commit to public repo
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-->
 <Parameters>
     <Modules>
         <DHT11>
@@ -12,23 +17,33 @@
     </Modules>
 
     <Settings>
+        <!-- In general, any "interval" or "timeout" setting implies time in seconds -->
         <Networking>
+            <!-- TCP port used for establishing authenticated connection -->
+            <TCPAuthPort>1776</TCPAuthPort>
+            <!-- UDP port over which sending of data occurs -->
             <UDPPort>1776</UDPPort>
-            <ServerURL></ServerURL>
-            <PacketSize></PacketSize>
-            <PacketSendInterval>1</PacketSendInterval>
-            <ClientHeartbeatSendInterval>1</ClientHeartbeatSendInterval>
-            <MaxTimeBeforeDisconnect>10</MaxTimeBeforeDisconnect>
-            <CheckInactiveConnectionsInterval>10</CheckInactiveConnectionsInterval>
+            <!-- URL for the server for clients to connect to for receiving data, not included in public repo for security -->
+            <ServerHost></ServerHost>
+
             <HeartbeatMessage>.</HeartbeatMessage>
+
+            <ClientDebugHost>127.0.0.1</ClientDebugHost>
+            <ServiceDebugHost>127.0.0.2</ServiceDebugHost>
+            <ServerDebugHost>127.0.0.3</ServerDebugHost>
+
+            <ClientAuthenticationTimeout>10</ClientAuthenticationTimeout>
+            <PacketSendInterval>1</PacketSendInterval>
             <SendDataInterval>1</SendDataInterval>
-            <ClientDebugHost>127.0.0.2</ClientDebugHost>
-            <ServiceDebugHost>127.0.0.1</ServiceDebugHost>
+            <ClientHeartbeatSendInterval>1</ClientHeartbeatSendInterval>
+            <CheckInactiveConnectionsInterval>10</CheckInactiveConnectionsInterval>
+            <MaxIntervalBeforeDisconnect>10</MaxIntervalBeforeDisconnect>
+
         </Networking>
         <Security>
-            <!--Possible modes are "Disabled", "Insecure" (passwords), and "Secure" (RSA key).
+            <!--Possible modes are "Disabled", "Enabled" (password)
                 Note that changing this will only work if the server is configured to the same mode as specified.-->
-            <AuthenticationMode>Secure</AuthenticationMode>
+            <PasswordAuthentication>Enabled</PasswordAuthentication>
         </Security>
     </Settings>
 </Parameters>

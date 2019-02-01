@@ -1,4 +1,4 @@
-import pickle
+import json
 import copy
 from threading import Thread
 
@@ -6,7 +6,7 @@ from twisted.internet.protocol import DatagramProtocol
 from twisted.internet.task import LoopingCall
 from twisted.internet import reactor
 
-from telemetry.common_network import Packet, Connection
+from telemetry.network import Packet, Connection
 
 
 class ServiceNetworkingHandler(Thread):
@@ -63,14 +63,14 @@ class ServiceUDP(DatagramProtocol):
         packet = Packet(copy.deepcopy(self.handler.send_buffer))  # Make a deep copy of the data
 
         if len(packet.data) > 0 and len(self.handler.connected_hosts) > 0: # If there is data and listening hosts
-            serialized_packet = pickle.dumps(packet)
+            encoded_json_packet = packet.convert_to_encoded_json()
             for connected_host in self.handler.connected_hosts:
-                self.transport.write(serialized_packet, connected_host)
+                self.transport.write(encoded_json_packet, connected_host)
             self.handler.send_buffer.clear()
 
     def drop_inactive_connections(self):
         for connection in list(self.handler.connected_hosts):
-            if self.uptime - self.handler.connected_hosts[connection].last_packet_sent_tick > self.settings["MaxTimeBeforeDisconnect"]:
+            if self.uptime - self.handler.connected_hosts[connection].last_packet_sent_tick > self.settings["MaxIntervalBeforeDisconnect"]:
                 del self.handler.connected_hosts[connection]
 
     def increment_uptime(self):
