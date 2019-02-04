@@ -1,15 +1,20 @@
 from enum import Enum
+import time
 
-from telemetry.file import Parser
+from telemetry.common.file import Parser
+from telemetry.common.auth import Credentials, Authentication
+from telemetry.common.state_handler import *
 
 
-class ClientStateHandler:
+class ClientStateHandler(StateHandler):
     """
-    Maintains the persistent state and data of the application
+    Maintains the persistent "global" state and data of the application
     """
     def __init__(self):
+        StateHandler.__init__(self)
         # Data storage
         self.modules = []
+        self.credentials = None
 
         # Flags and other settings in XML form
         self.module_data = Parser.parse_xml("Modules")
@@ -25,6 +30,15 @@ class ClientStateHandler:
     def create_modules(self, module_data):
         for module_name in module_data:
             self.modules.append(Module(module_name, module_data[module_name]))
+
+    def create_credentials(self, passphrase):
+        salt, salted_hash = Authentication.convert_to_salted_hash(passphrase)
+        self.credentials = Credentials(salt, salted_hash)
+
+    def update_credentials(self, new_credentials):
+        print("started")
+        self.credentials = new_credentials
+        print(self.credentials)
 
 
 class Module:

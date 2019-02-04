@@ -1,7 +1,6 @@
 from telemetry.client.client_network import ClientNetworkingHandler
 from telemetry.client.client_state import ClientStateHandler
 from telemetry.client.gui import UserInterface
-from telemetry.auth import Authentication
 
 
 class Client:

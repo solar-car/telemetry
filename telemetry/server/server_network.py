@@ -1,15 +1,13 @@
 import json
-from enum import Enum
 
 from threading import Thread
 
-from twisted.internet.protocol import DatagramProtocol, Protocol, Factory
-from twisted.internet.task import LoopingCall
+from twisted.internet.protocol import Protocol, Factory
 from twisted.internet import reactor
-import twisted.internet.error as error
-from twisted.internet.endpoints import serverFromString, TCP4ServerEndpoint
+from twisted.internet.error import ConnectionDone
+from twisted.internet.endpoints import TCP4ServerEndpoint
 
-from telemetry.network import Packet
+from telemetry.common.network import Packet
 
 
 class ServerNetworkingHandler(Thread):
@@ -44,6 +42,9 @@ class HandleAuthenticationAttempt(Protocol):
     def connectionMade(self):
         print("connection")
 
+    def connectionLost(self, reason=ConnectionDone):
+        print("disconnect")
+
     def dataReceived(self, data):
         try:
             passphrase = Packet.construct_from_encoded_json(data).data
@@ -52,8 +53,10 @@ class HandleAuthenticationAttempt(Protocol):
                 self.transport.write(Packet("authenticated").convert_to_encoded_json())
             else:
                 self.transport.write(Packet("not authenticated").convert_to_encoded_json())
-        except:
+        except json.JSONDecodeError:
             print("Packet corrupted or in incorrect format")
+        finally:
+            self.transport.loseConnection() # Close out the connection
 
 
 

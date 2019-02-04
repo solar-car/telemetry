@@ -1,4 +1,3 @@
-import json
 import copy
 from threading import Thread
 
@@ -6,7 +5,7 @@ from twisted.internet.protocol import DatagramProtocol
 from twisted.internet.task import LoopingCall
 from twisted.internet import reactor
 
-from telemetry.network import Packet, Connection
+from telemetry.common.network import Packet, Connection
 
 
 class ServiceNetworkingHandler(Thread):

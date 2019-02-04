@@ -3,6 +3,11 @@ import json
 from enum import Enum
 
 
+class AuthenticationResult(Enum):
+    AUTHENTICATED = "authenticated"
+    NOT_AUTHENTICATED = "not authenticated"
+
+
 class Packet:
     def __init__(self, data=""):
         self.data = data

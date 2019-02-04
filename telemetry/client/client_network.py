@@ -2,14 +2,13 @@ import json
 
 from threading import Thread
 
-from twisted.internet.protocol import DatagramProtocol, Protocol, Factory, ClientFactory
+from twisted.internet.protocol import DatagramProtocol, Protocol
 from twisted.internet.task import LoopingCall
 from twisted.internet import reactor
-from twisted.internet.defer import Deferred
-import twisted.internet.error as error
-from twisted.internet.endpoints import clientFromString, connectProtocol, TCP4ClientEndpoint
+from twisted.internet.error import ConnectionDone
+from twisted.internet.endpoints import connectProtocol, TCP4ClientEndpoint
 
-from telemetry.network import Packet
+from telemetry.common.network import Packet, AuthenticationResult
 
 
 class ClientNetworkingHandler(Thread):
@@ -26,18 +25,13 @@ class ClientNetworkingHandler(Thread):
 
         self.authentication_attempts = 0
         self.authentication_state = "not authenticated"
-        self.passcode = "hello"
 
         # Authentication connection
         self.endpoint = TCP4ClientEndpoint(reactor, self.server_host, self.tcp_authentication_port)
 
-    def authentication_connection_failed(self, deferred_result):
-        self.authentication_attempts += 1
-        print(deferred_result)
-
     def run(self):
         deferred = connectProtocol(self.endpoint, AttemptAuthentication(self))
-        deferred.addErrback(self.authentication_connection_failed)
+        deferred.addErrback(lambda result: print(result))
         reactor.run(installSignalHandlers=False)
 
 
@@ -46,11 +40,20 @@ class AttemptAuthentication(Protocol):
         self.context = context
 
     def connectionMade(self):
-        p = Packet(self.context.passcode)
-        self.transport.write(p.convert_to_encoded_json())
+        print("b")
+
+    def connectionLost(self, reason=ConnectionDone):
+        print("disconnect")
 
     def dataReceived(self, data):
-        print(Packet.construct_from_encoded_json(data).data)
+        try:
+            authentication_result = Packet.construct_from_encoded_json(data).data
+            if authentication_result == AuthenticationResult.AUTHENTICATED.value:
+                print(AuthenticationResult.AUTHENTICATED.value)
+            elif authentication_result == AuthenticationResult.NOT_AUTHENTICATED.value:
+                print(AuthenticationResult.NOT_AUTHENTICATED.value)
+        except json.JSONDecodeError:
+            print("Authentication packet was corrupted or in incorrect format")
 
 
 # Sends heartbeat datagrams to the server to let it know the client is still listening

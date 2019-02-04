@@ -7,7 +7,7 @@ from Crypto import Random
 
 # Reminder: I am not a cryptographer and can't guarantee any of these implementations are 100% secure. Their intended
 # purpose is mostly to add an extra barrier to prevent random unauthorized connections to the server, and not to
-# handle sensitive information.
+# handle sensitive information. Also, keep in mind I mostly did this part for fun, not out of any real need.
 
 
 class Authentication:
@@ -65,6 +65,13 @@ class Authentication:
 
         return plaintext
 
+    @staticmethod
+    def convert_to_salted_hash(passphrase):
+        salt = Random.get_random_bytes(16)
+        return salt, PBKDF2(passphrase, salt)
+
 
 class Credentials:
-    pass
+    def __init__(self, salt, salted_hash):
+        self.salt = salt
+        self.salted_hash = salted_hash
