@@ -5,12 +5,23 @@ from PySide2.QtCore import QAbstractItemModel, QModelIndex, Qt
 from PySide2.QtGui import QStandardItemModel, QStandardItem
 import PySide2.QtWidgets as Widgets
 
+from telemetry.common.state_handler import Subscriber
+import telemetry.client.client_state
 
-class UserInterface(Thread):
-    def __init__(self, state_handler):
+
+class UserInterface(Thread, Subscriber):
+    def __init__(self, event_handler, client_state_handler, modules_init, settings=None):
         Thread.__init__(self)
-        self.state_handler = state_handler
-        modules = state_handler.modules
+        self.event_handler = event_handler
+        self._client_state_handler = client_state_handler
+        self.modules_init = modules_init
+
+    def run(self):
+        self.initialize_qt()
+        self.qt_app.exec_()
+
+    # Workaround instead of initializing in __init__ to reconcile Python's threading API and QT
+    def initialize_qt(self):
         self.qt_app = Widgets.QApplication()
 
         # Getting reference to GUI items from main_window.ui so that they can be manipulated programmatically
@@ -29,10 +40,14 @@ class UserInterface(Thread):
         self.enter_button.clicked.connect(self.handle_password_entry)
         self.password_box.show()
 
-        self.initialize_module_tree(modules)
-        self.update_module_tree(modules)
+        self.initialize_module_tree(self.modules_init)
+        self.update_module_tree(self.modules_init)
 
-        self.qt_app.exec_()
+    def external_update(self, updated_state):
+        updated_module_data = updated_state.modules
+        print(updated_module_data[0].sensors[0].gui_reference)
+        self.update_module_tree(updated_module_data)
+        print("b")
 
     # Setting up the initial data and dimensions of the QTreeWidget for displaying module and sensor data
     def initialize_module_tree(self, module_data):
@@ -57,6 +72,7 @@ class UserInterface(Thread):
                     sub_tree_item = Widgets.QTreeWidgetItem([sensor, sensor.value, "", "", ""])
 
                 sensor.gui_reference = sub_tree_item
+                print(sub_tree_item)
                 tree_item.addChild(sub_tree_item)
 
     # Update each item in the QTreeWidget with new data
@@ -76,4 +92,4 @@ class UserInterface(Thread):
     def handle_password_entry(self):
         data = self.password_entry.text()
         self.password_box.close()
-        self.state_handler.add_task(self.state_handler.update_credentials, data)
+        self.event_handler.add_task(self._client_state_handler.update_credentials, data)

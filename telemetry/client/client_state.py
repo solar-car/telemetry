@@ -1,17 +1,17 @@
 from enum import Enum
-import time
+import copy
+import copyreg
 
 from telemetry.common.file import Parser
 from telemetry.common.auth import Credentials, Authentication
-from telemetry.common.state_handler import *
 
 
-class ClientStateHandler(StateHandler):
+# None of the methods of this class should be called by a non-main thread, but rather queued up in EventHandler
+class ClientStateHandler:
     """
     Maintains the persistent "global" state and data of the application
     """
     def __init__(self):
-        StateHandler.__init__(self)
         # Data storage
         self.modules = []
         self.credentials = None
@@ -70,15 +70,21 @@ class Sensor:
         OPERATIONAL = "Operational"
         NON_OPERATIONAL = "?"
 
-    def __init__(self, name, gpio_pin, mode, unit):
+    @staticmethod
+    def p(o):
+        return Sensor, (o.name, o.gpio_pin, o.mode, o.unit, o.status, o.value, o.gui_reference)
+
+    def __init__(self, name, gpio_pin, mode, unit, status="Operational", value=0, gui_reference=None):
         self.name = name
         self.gpio_pin = gpio_pin
         self.mode = mode
         self.unit = unit
-        self.status = "Operational"
-
-        self.value = 0
-        self.gui_reference = None
+        self.status = status
+        self.value = value
+        self.gui_reference = gui_reference
 
     def get_current_pin_value(self):
         pass
+
+
+copyreg.pickle(Sensor, Sensor.p)

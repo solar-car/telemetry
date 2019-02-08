@@ -1,11 +1,14 @@
 import time
+import copy
 from threading import Thread
 
 from queue import Queue
 
 
-class StateHandler:
-    def __init__(self):
+class EventHandler:
+    def __init__(self, state_handler):
+        self.state_handler = state_handler
+        self.subscriptions = []
         self.access_queue = Queue()
         self.active_task = None
 
@@ -25,6 +28,15 @@ class StateHandler:
             else:
                 self.active_task = None
 
+    def notify_subscribers_of_updates(self):
+        for subscriber in self.subscriptions:
+            subscriber.external_update(copy.deepcopy(self.state_handler))
+
+
+class Subscriber:
+    def external_update(self, updated_state):
+        pass
+
 
 # All modifications of StateHandler data after initialization should be encapsulated as a task for thread-safety
 # purposes. Doing so only allows one modification of StateHandler at a time without blocking the entire program as would
@@ -39,6 +51,7 @@ class Task(Thread):
 
     def run(self):
         self.function(*self.args, **self.kwargs)
+        self.state_handler.notify_subscribers_of_updates()
         self.state_handler.active_task = None
         self.state_handler.run_next_task()
 

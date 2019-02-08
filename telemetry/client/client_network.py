@@ -9,15 +9,17 @@ from twisted.internet.error import ConnectionDone
 from twisted.internet.endpoints import connectProtocol, TCP4ClientEndpoint
 
 from telemetry.common.network import Packet, AuthenticationResult
+from telemetry.common.state_handler import Subscriber
 
 
-class ClientNetworkingHandler(Thread):
-    def __init__(self, state_handler):
+class ClientNetworkingHandler(Thread, Subscriber):
+    def __init__(self, event_handler, client_state_handler, settings):
         Thread.__init__(self)
-        self.state_handler = state_handler
+        self.event_handler = event_handler
+        self._client_state_handler = client_state_handler
         
         # General networking settings
-        self.settings = self.state_handler.settings["Networking"]
+        self.settings = settings["Networking"]
         self.client_host = self.settings["ClientDebugHost"]
         self.server_host = self.settings["ServerDebugHost"]
         self.tcp_authentication_port = self.settings["TCPAuthPort"]
@@ -33,6 +35,9 @@ class ClientNetworkingHandler(Thread):
         deferred = connectProtocol(self.endpoint, AttemptAuthentication(self))
         deferred.addErrback(lambda result: print(result))
         reactor.run(installSignalHandlers=False)
+
+    def external_update(self, updated_state):
+        pass
 
 
 class AttemptAuthentication(Protocol):
