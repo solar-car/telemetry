@@ -10,6 +10,7 @@ from twisted.internet.endpoints import connectProtocol, TCP4ClientEndpoint
 
 from telemetry.common.network import Packet, AuthenticationResult
 from telemetry.common.state_handler import Subscriber
+from telemetry.client.client_state import ClientStateHandler
 
 
 class ClientNetworkingHandler(Thread, Subscriber):
@@ -46,6 +47,7 @@ class AttemptAuthentication(Protocol):
 
     def connectionMade(self):
         print("b")
+        self.context.event_handler.add_task()
 
     def connectionLost(self, reason=ConnectionDone):
         print("disconnect")

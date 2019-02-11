@@ -1,6 +1,5 @@
 from enum import Enum
-import copy
-import copyreg
+from copy import deepcopy
 
 from telemetry.common.file import Parser
 from telemetry.common.auth import Credentials, Authentication
@@ -36,9 +35,15 @@ class ClientStateHandler:
         self.credentials = Credentials(salt, salted_hash)
 
     def update_credentials(self, new_credentials):
-        print("started")
         self.credentials = new_credentials
-        print(self.credentials)
+        print(f"new credentials: {self.credentials}")
+
+    def update_status(self, server_connection, raspberry_pi_connection):
+        self.raspberry_pi_connection_status = raspberry_pi_connection
+        self.server_connection_status = server_connection
+
+    def quit(self):
+        exit()
 
 
 class Module:
@@ -70,11 +75,20 @@ class Sensor:
         OPERATIONAL = "Operational"
         NON_OPERATIONAL = "?"
 
-    @staticmethod
-    def p(o):
-        return Sensor, (o.name, o.gpio_pin, o.mode, o.unit, o.status, o.value, o.gui_reference)
+    def __deepcopy__(self, memo):
+        copy = type(self)()
+        memo[id(self)] = copy
+        copy.name = deepcopy(self.name)
+        copy.gpio_pin = deepcopy(self.gpio_pin, memo)
+        copy.mode = deepcopy(self.mode, memo)
+        copy.unit = deepcopy(self.unit, memo)
+        copy.status = deepcopy(self.status, memo)
+        copy.value = deepcopy(self.value, memo)
+        copy.gui_reference = self.gui_reference
+        return copy
 
-    def __init__(self, name, gpio_pin, mode, unit, status="Operational", value=0, gui_reference=None):
+    def __init__(self, name="", gpio_pin=0, mode=Mode.INPUT, unit="",
+                 status="Operational", value=0, gui_reference=None):
         self.name = name
         self.gpio_pin = gpio_pin
         self.mode = mode
@@ -85,6 +99,3 @@ class Sensor:
 
     def get_current_pin_value(self):
         pass
-
-
-copyreg.pickle(Sensor, Sensor.p)

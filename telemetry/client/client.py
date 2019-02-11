@@ -14,11 +14,12 @@ class Client:
         self.event_handler = EventHandler(self.state_handler)
 
         self.networking_handler = ClientNetworkingHandler(self.event_handler, self.state_handler,
-                                                          self.state_handler.settings)
+                                                          copy.deepcopy(self.state_handler.settings))
         self.networking_handler.start()
         self.event_handler.subscriptions.append(self.networking_handler)
 
-        self.user_interface = UserInterface(self.event_handler, self.state_handler, self.state_handler.modules)
+        self.user_interface = UserInterface(self.event_handler, self.state_handler, self.state_handler.modules,
+                                            self.state_handler.settings)
         self.user_interface.start()
         self.event_handler.subscriptions.append(self.user_interface)
 

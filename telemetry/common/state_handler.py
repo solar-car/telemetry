@@ -33,6 +33,7 @@ class EventHandler:
             subscriber.external_update(copy.deepcopy(self.state_handler))
 
 
+# Basically an interface, should be implemented in child classes
 class Subscriber:
     def external_update(self, updated_state):
         pass
