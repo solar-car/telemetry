@@ -49,7 +49,6 @@ class UserInterface(Thread, Subscriber):
 
     def external_update(self, updated_state):
         self.cached_client_state_handler = updated_state
-        print(updated_state.modules[0].sensors[0].gui_reference)
         self.update_module_tree(self.cached_client_state_handler.modules)
         self.update_extra_gui_elements()
         print("external update triggered")
@@ -83,7 +82,6 @@ class UserInterface(Thread, Subscriber):
     def update_module_tree(self, module_data):
         for module in module_data:
             for sensor in module.sensors:
-                print(sensor)
                 sensor.gui_reference.setData(1, Qt.ItemDataRole.DisplayRole, str(sensor.value))
                 if type(sensor.value) == int:
                     if sensor.value < int(sensor.gui_reference.data(2, Qt.ItemDataRole.DisplayRole)):
@@ -100,6 +98,13 @@ class UserInterface(Thread, Subscriber):
         elif not self.cached_client_state_handler.raspberry_pi_connection_status:
             self.pi_connection_status_widget.setText("Not connected")
             self.pi_connection_status_widget.setStyleSheet("color: red")
+
+        if self.cached_client_state_handler.server_connection_status:
+            self.server_connection_status_widget.setText("Connected")
+            self.server_connection_status_widget.setStyleSheet("color: green")
+        elif not self.cached_client_state_handler.server_connection_status:
+            self.server_connection_status_widget.setText("Not connected")
+            self.server_connection_status_widget.setStyleSheet("color: red")
 
     # Return the entered password value in the password box and close it
     def handle_password_entry(self):

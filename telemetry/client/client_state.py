@@ -29,6 +29,7 @@ class ClientStateHandler:
     def create_modules(self, module_data):
         for module_name in module_data:
             self.modules.append(Module(module_name, module_data[module_name]))
+        print("z")
 
     def create_credentials(self, passphrase):
         salt, salted_hash = Authentication.convert_to_salted_hash(passphrase)

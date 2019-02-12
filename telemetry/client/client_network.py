@@ -17,7 +17,7 @@ class ClientNetworkingHandler(Thread, Subscriber):
     def __init__(self, event_handler, client_state_handler, settings):
         Thread.__init__(self)
         self.event_handler = event_handler
-        self._client_state_handler = client_state_handler
+        self.client_state_handler = client_state_handler
         
         # General networking settings
         self.settings = settings["Networking"]
@@ -46,11 +46,11 @@ class AttemptAuthentication(Protocol):
         self.context = context
 
     def connectionMade(self):
-        print("b")
-        self.context.event_handler.add_task()
+        self.context.event_handler.add_task(self.context.client_state_handler.update_status, True, False)
 
     def connectionLost(self, reason=ConnectionDone):
         print("disconnect")
+        self.context.event_handler.add_task(self.context.client_state_handler.update_status, False, False)
 
     def dataReceived(self, data):
         try:
