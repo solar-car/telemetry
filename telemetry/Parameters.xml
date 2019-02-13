@@ -20,13 +20,10 @@ General reminder for editing: make sure to exclude potentially sensitive informa
         <!-- In general, any "interval" or "timeout" setting implies time in seconds -->
         <Networking>
             <!-- TCP port used for establishing authenticated connection -->
-            <TCPAuthPort>1776</TCPAuthPort>
-            <!-- UDP port over which sending of data occurs -->
-            <UDPPort>1776</UDPPort>
+            <ClientTCPPort>1776</ClientTCPPort>
+            <ServiceTCPPort>1777</ServiceTCPPort>
             <!-- URL for the server for clients to connect to for receiving data, not included in public repo for security -->
             <ServerHost></ServerHost>
-
-            <HeartbeatMessage>.</HeartbeatMessage>
 
             <ClientDebugHost>127.0.0.1</ClientDebugHost>
             <ServiceDebugHost>127.0.0.2</ServiceDebugHost>

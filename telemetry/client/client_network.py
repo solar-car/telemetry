@@ -23,17 +23,17 @@ class ClientNetworkingHandler(Thread, Subscriber):
         self.settings = settings["Networking"]
         self.client_host = self.settings["ClientDebugHost"]
         self.server_host = self.settings["ServerDebugHost"]
-        self.tcp_authentication_port = self.settings["TCPAuthPort"]
+        self.server_tcp_port = self.settings["ClientTCPPort"]
         self.client_authentication_timeout = self.settings["ClientAuthenticationTimeout"]
 
         self.authentication_attempts = 0
         self.authentication_state = "not authenticated"
 
         # Authentication connection
-        self.endpoint = TCP4ClientEndpoint(reactor, self.server_host, self.tcp_authentication_port)
+        self.endpoint = TCP4ClientEndpoint(reactor, self.server_host, self.server_tcp_port)
 
     def run(self):
-        deferred = connectProtocol(self.endpoint, AttemptAuthentication(self))
+        deferred = connectProtocol(self.endpoint, ServerConnection(self))
         deferred.addErrback(lambda result: print(result))
         reactor.run(installSignalHandlers=False)
 
@@ -41,9 +41,10 @@ class ClientNetworkingHandler(Thread, Subscriber):
         pass
 
 
-class AttemptAuthentication(Protocol):
+class ServerConnection(Protocol):
     def __init__(self, context):
         self.context = context
+        self.authenticated = False
 
     def connectionMade(self):
         self.context.event_handler.add_task(self.context.client_state_handler.update_status, True, False)
@@ -53,32 +54,17 @@ class AttemptAuthentication(Protocol):
         self.context.event_handler.add_task(self.context.client_state_handler.update_status, False, False)
 
     def dataReceived(self, data):
-        try:
-            authentication_result = Packet.construct_from_encoded_json(data).data
-            if authentication_result == AuthenticationResult.AUTHENTICATED.value:
-                print(AuthenticationResult.AUTHENTICATED.value)
-            elif authentication_result == AuthenticationResult.NOT_AUTHENTICATED.value:
-                print(AuthenticationResult.NOT_AUTHENTICATED.value)
-        except json.JSONDecodeError:
-            print("Authentication packet was corrupted or in incorrect format")
+        if self.authenticated:
+            pass
 
-
-# Sends heartbeat datagrams to the server to let it know the client is still listening
-class MaintainConnection(DatagramProtocol):
-    def __init__(self, handler):
-        self.handler = handler
-        self.settings = handler.settings
-        self.send_heartbeat_loop = None
-
-    def startProtocol(self):
-        self.send_heartbeat_loop = LoopingCall(self.send_heartbeat)
-        self.send_heartbeat_loop.start(self.settings["ClientHeartbeatSendInterval"], now=False)
-
-    def datagramReceived(self, packet, addr):
-        deserialized_packet = Packet().construct_from_encoded_json(packet)
-
-        self.handler.update_data(deserialized_packet)
-
-    def send_heartbeat(self):
-        self.transport.write(self.settings["HeartbeatMessage"].encode(), (self.service_host, self.settings["UDPPort"]))
+        #  Attempt authentication
+        else:
+            try:
+                authentication_result = Packet.construct_from_encoded_json(data).data
+                if authentication_result == AuthenticationResult.AUTHENTICATED.value:
+                    print(AuthenticationResult.AUTHENTICATED.value)
+                elif authentication_result == AuthenticationResult.NOT_AUTHENTICATED.value:
+                    print(AuthenticationResult.NOT_AUTHENTICATED.value)
+            except json.JSONDecodeError:
+                print("Authentication packet was corrupted or in incorrect format")
 
