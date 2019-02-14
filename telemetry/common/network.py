@@ -3,14 +3,19 @@ import json
 from enum import Enum
 
 
-class AuthenticationResult(Enum):
-    AUTHENTICATED = "authenticated"
-    NOT_AUTHENTICATED = "not authenticated"
-
-
 class Packet:
-    def __init__(self, data=""):
-        self.data = data
+    class AuthenticationResult(Enum):
+        AUTHENTICATED = "authenticated"
+        NOT_AUTHENTICATED = "not authenticated"
+
+    class PacketType(Enum):
+        DEBUG = 0
+        AUTHENTICATION = 1
+        DATA = 2
+
+    def __init__(self, packet_type=PacketType.DATA, **kwargs):
+        self.data = {"type": packet_type}
+        self.data.update(kwargs)
         self.timestamp = str(datetime.datetime.now())
 
     def convert_to_encoded_json(self):
@@ -23,9 +28,3 @@ class Packet:
         p.data = json_data["data"]
         p.timestamp = json_data["timestamp"]
         return p
-
-
-class Connection:
-    def __init__(self, addr, uptime_tick_at_creation):
-        self.addr = addr
-        self.last_packet_sent_tick = uptime_tick_at_creation
