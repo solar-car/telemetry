@@ -10,8 +10,9 @@ class ClientStateHandler:
     """
     Maintains the persistent "global" state and data of the application
     """
-    def __init__(self):
+    def __init__(self, client):
         # Data storage
+        self.client = client
         self.modules = []
         self.credentials = None
 
