@@ -5,7 +5,7 @@ from xml.etree import ElementTree
 class Parser:
     @staticmethod
     def parse_xml(section_key):
-        path = "../Parameters.xml"
+        path = "Parameters.xml"
         xml_tree = ElementTree.parse(path)
         root = xml_tree.getroot()
 
@@ -48,7 +48,7 @@ class Parser:
 class Logger:
     @staticmethod
     def log_data(data):
-        path = "../../Data/Log.txt"
+        path = "Data/ClientLog.txt"
         with open(path, 'a') as file:
             timestamp = datetime.datetime.now()
             file.write(f"{data} :: {timestamp}" + '\n')

@@ -1,10 +1,10 @@
 import copy
 import time
 
-from telemetry.client.client_network import ClientNetworkingHandler
-from telemetry.client.client_state import ClientStateHandler
-from telemetry.client.gui import UserInterface
-from telemetry.common.state_handler import EventHandler
+from client.client_network import ClientNetworkingHandler
+from client.client_state import ClientStateHandler
+from client.gui import UserInterface
+from common.state_handler import EventHandler
 
 
 class Client:
@@ -17,16 +17,14 @@ class Client:
         self.user_interface = UserInterface(self.event_handler, self.state_handler, self.state_handler.modules,
                                             self.state_handler.settings)
         self.user_interface.start()
+        self.event_handler.subscriptions.append(self.user_interface)
 
         time.sleep(3)
 
         self.networking_handler = ClientNetworkingHandler(self.event_handler, self.state_handler,
                                                           copy.deepcopy(self.state_handler.settings))
-        self.networking_handler.start()
         self.event_handler.subscriptions.append(self.networking_handler)
-
-
-        self.event_handler.subscriptions.append(self.user_interface)
+        self.networking_handler.start()
 
 
 client = Client()

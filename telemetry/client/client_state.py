@@ -1,8 +1,8 @@
 from enum import Enum
 from copy import deepcopy
 
-from telemetry.common.file import Parser
-from telemetry.common.auth import Credentials, Authentication
+from common.file import Parser
+from common.auth import Credentials, Authentication
 
 
 # None of the methods of this class should be called by a non-main thread, but rather queued up in EventHandler

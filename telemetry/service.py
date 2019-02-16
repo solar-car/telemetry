@@ -1,5 +1,5 @@
-from telemetry.service.service_network import ServiceNetworkingHandler
-from telemetry.service.service_state import ServiceStateHandler
+from telemetry.service import ServiceNetworkingHandler
+from telemetry.service import ServiceStateHandler
 
 
 class TelemetryService:

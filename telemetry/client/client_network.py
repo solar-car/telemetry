@@ -2,15 +2,13 @@ import json
 
 from threading import Thread
 
-from twisted.internet.protocol import DatagramProtocol, Protocol
-from twisted.internet.task import LoopingCall
+from twisted.internet.protocol import Protocol
 from twisted.internet import reactor
 from twisted.internet.error import ConnectionDone
 from twisted.internet.endpoints import connectProtocol, TCP4ClientEndpoint
 
-from telemetry.common.network import Packet, AuthenticationResult
-from telemetry.common.state_handler import Subscriber
-from telemetry.client.client_state import ClientStateHandler
+from common.network import Packet, AuthenticationResult
+from common.state_handler import Subscriber
 
 
 class ClientNetworkingHandler(Thread, Subscriber):

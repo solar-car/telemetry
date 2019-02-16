@@ -1,12 +1,10 @@
 from threading import Thread
 
 from PySide2.QtUiTools import QUiLoader
-from PySide2.QtCore import QAbstractItemModel, QModelIndex, Qt
-from PySide2.QtGui import QStandardItemModel, QStandardItem
+from PySide2.QtCore import Qt
 import PySide2.QtWidgets as Widgets
 
-from telemetry.common.state_handler import Subscriber
-import telemetry.client.client_state
+from common.state_handler import Subscriber
 
 
 class UserInterface(Thread, Subscriber):
@@ -24,7 +22,7 @@ class UserInterface(Thread, Subscriber):
         self.qt_app.aboutToQuit.connect(self._client_state_handler.quit)
 
         # Getting reference to GUI items from main_window.ui so that they can be manipulated programmatically
-        self.main_window = QUiLoader().load("Data/main_window.ui")
+        self.main_window = QUiLoader().load("client/main_window.ui")
         self.pi_connection_status_widget = self.main_window.findChild(Widgets.QLabel, "pi_connection_status")
         self.server_connection_status_widget = self.main_window.findChild(Widgets.QLabel,
                                                                           "server_connection_status")
@@ -34,7 +32,7 @@ class UserInterface(Thread, Subscriber):
         self.main_window.show()
 
         # Getting reference to GUI items from password_box.ui so that they can be manipulated programmatically
-        self.password_box = QUiLoader().load("Data/password_box.ui")
+        self.password_box = QUiLoader().load("client/password_box.ui")
         self.password_entry = self.password_box.findChild(Widgets.QLineEdit, "password_entry")
         self.enter_button = self.password_box.findChild(Widgets.QPushButton, "enter_button")
         self.enter_button.clicked.connect(self.handle_password_entry)

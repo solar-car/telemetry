@@ -1,8 +1,8 @@
 import copy
 
 from telemetry.common.state_handler import EventHandler
-from telemetry.server.server_network import ServerNetworkingHandler
-from telemetry.server.server_state import ServerStateHandler
+from telemetry.server import ServerNetworkingHandler
+from telemetry.server import ServerStateHandler
 
 
 class Server:
