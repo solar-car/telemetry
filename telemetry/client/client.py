@@ -23,8 +23,9 @@ class Client:
         self.networking_handler = ClientNetworkingHandler(self.event_handler, self.state_handler,
                                                           copy.deepcopy(self.state_handler.settings))
         self.networking_handler.start()
-
         self.event_handler.subscriptions.append(self.networking_handler)
+
+
         self.event_handler.subscriptions.append(self.user_interface)
 
 

@@ -55,3 +55,13 @@ class Task(Thread):
         self.state_handler.notify_subscribers_of_updates()
         self.state_handler.active_task = None
         self.state_handler.run_next_task()
+
+
+# Temporary debug functions
+def foo():
+    time.sleep(5)
+
+
+def bar(a, b="1"):
+    print(a, b)
+

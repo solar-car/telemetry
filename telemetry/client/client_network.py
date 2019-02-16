@@ -44,36 +44,27 @@ class ClientNetworkingHandler(Thread, Subscriber):
 class ServerConnection(Protocol):
     def __init__(self, context):
         self.context = context
+        self.authenticated = False
 
     def connectionMade(self):
-        pass
+        self.context.event_handler.add_task(self.context.client_state_handler.update_status, True, False)
 
     def connectionLost(self, reason=ConnectionDone):
         print("disconnect")
         self.context.event_handler.add_task(self.context.client_state_handler.update_status, False, False)
 
-    def dataReceived(self, packet):
-        try:
-            packet = Packet.construct_from_encoded_json(packet)
-            if packet.type == Packet.PacketType.AUTHENTICATION:
-                self.handle_authentication_response(packet)
-            elif packet.type == Packet.PacketType.DATA:
-                self.handle_new_data(packet)
+    def dataReceived(self, data):
+        if self.authenticated:
+            pass
 
-        except json.JSONDecodeError:
-            print("Authentication packet was corrupted or in incorrect format")
-
-    def handle_authentication_response(self, packet):
-        authentication_result = packet.data["server"]
-        if authentication_result == AuthenticationResult.AUTHENTICATED.value:
-            self.context.event_handler.add_task(
-                self.context.client_state_handler.update_connection_status, True, packet.data["service_status"])
-
-        elif authentication_result == AuthenticationResult.NOT_AUTHENTICATED.value:
-            self.context.event_handler.add_task(
-                self.context.client_state_handler.update_connection_status, False, False)
-
-    def handle_new_data(self, packet):
-        pass
-
+        #  Attempt authentication
+        else:
+            try:
+                authentication_result = Packet.construct_from_encoded_json(data).data
+                if authentication_result == AuthenticationResult.AUTHENTICATED.value:
+                    print(AuthenticationResult.AUTHENTICATED.value)
+                elif authentication_result == AuthenticationResult.NOT_AUTHENTICATED.value:
+                    print(AuthenticationResult.NOT_AUTHENTICATED.value)
+            except json.JSONDecodeError:
+                print("Authentication packet was corrupted or in incorrect format")
 
