@@ -8,7 +8,7 @@ from twisted.internet import reactor
 from twisted.internet.error import ConnectionDone
 from twisted.internet.endpoints import connectProtocol, TCP4ClientEndpoint
 
-from telemetry.common.network import Packet
+from telemetry.common.network import Packet, AuthenticationResult
 from telemetry.common.state_handler import Subscriber
 from telemetry.client.client_state import ClientStateHandler
 
@@ -18,7 +18,6 @@ class ClientNetworkingHandler(Thread, Subscriber):
         Thread.__init__(self)
         self.event_handler = event_handler
         self.client_state_handler = client_state_handler
-        self.cached_state = None
         
         # General networking settings
         self.settings = settings["Networking"]
@@ -39,7 +38,7 @@ class ClientNetworkingHandler(Thread, Subscriber):
         reactor.run(installSignalHandlers=False)
 
     def external_update(self, updated_state):
-        self.cached_state = updated_state
+        pass
 
 
 class ServerConnection(Protocol):
@@ -47,7 +46,7 @@ class ServerConnection(Protocol):
         self.context = context
 
     def connectionMade(self):
-        print("connected")
+        pass
 
     def connectionLost(self, reason=ConnectionDone):
         print("disconnect")
@@ -64,20 +63,17 @@ class ServerConnection(Protocol):
         except json.JSONDecodeError:
             print("Authentication packet was corrupted or in incorrect format")
 
-    def attempt_authentication(self):
-        p = Packet(Packet.PacketType.AUTHENTICATION, credentials=self.cached_state.credentials)
-        encoded_p = p.convert_to_encoded_json()
-        self.transport.write(encoded_p)
-
     def handle_authentication_response(self, packet):
         authentication_result = packet.data["server"]
-        if authentication_result == Packet.AuthenticationResult.AUTHENTICATED.value:
+        if authentication_result == AuthenticationResult.AUTHENTICATED.value:
             self.context.event_handler.add_task(
                 self.context.client_state_handler.update_connection_status, True, packet.data["service_status"])
 
-        elif authentication_result == Packet.AuthenticationResult.NOT_AUTHENTICATED.value:
+        elif authentication_result == AuthenticationResult.NOT_AUTHENTICATED.value:
             self.context.event_handler.add_task(
                 self.context.client_state_handler.update_connection_status, False, False)
 
     def handle_new_data(self, packet):
         pass
+
+

@@ -10,7 +10,7 @@ from telemetry.common.state_handler import EventHandler
 class Client:
     def __init__(self):
 
-        self.state_handler = ClientStateHandler(self)  # Should be initialized first
+        self.state_handler = ClientStateHandler()  # Should be initialized first
         # All access to state_handler in non-main threads should happen through event_handler
         self.event_handler = EventHandler(self.state_handler)
 
