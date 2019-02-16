@@ -51,5 +51,5 @@ class Logger:
         path = "Data/ClientLog.txt"
         with open(path, 'a') as file:
             timestamp = datetime.datetime.now()
-            file.write(f"{data} :: {timestamp}" + '\n')
+            file.write("{0} :: {1}".format(data, timestamp) + '\n')
 

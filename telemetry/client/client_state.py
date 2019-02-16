@@ -37,7 +37,7 @@ class ClientStateHandler:
 
     def update_credentials(self, new_credentials):
         self.credentials = new_credentials
-        print(f"new credentials: {self.credentials}")
+        print("new credentials: {0}".format(self.credentials))
 
     def update_status(self, server_connection, raspberry_pi_connection):
         self.raspberry_pi_connection_status = raspberry_pi_connection
