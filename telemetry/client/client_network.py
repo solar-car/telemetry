@@ -23,35 +23,38 @@ class ClientNetworkingHandler(Thread, Subscriber):
         self.settings = settings["Networking"]
         self.client_host = self.settings["ClientDebugHost"]
         self.server_host = self.settings["ServerDebugHost"]
-        self.server_tcp_port = self.settings["ClientTCPPort"]
+        self.connection_tcp_port = self.settings["ClientTCPPort"]
+        self.auth_tcp_port = self.settings["ClientTCPAuthPort"]
         self.client_authentication_timeout = self.settings["ClientAuthenticationTimeout"]
 
         self.authentication_attempts = 0
         self.authentication_state = "not authenticated"
 
         # Authentication connection
-        self.endpoint = TCP4ClientEndpoint(reactor, self.server_host, self.server_tcp_port)
+        self.auth_endpoint = TCP4ClientEndpoint(reactor, self.server_host, self.auth_tcp_port)
+        self.connection_endpoint = TCP4ClientEndpoint(reactor, self.server_host, self.connection_tcp_port)
 
     def run(self):
-        deferred = connectProtocol(self.endpoint, ServerConnection(self))
-        deferred.addErrback(lambda result: print(result))
+        connectProtocol(self.auth_endpoint, ServerAuth(self))
+        connectProtocol(self.connection_endpoint, ServerConnect(self))
+
         reactor.run(installSignalHandlers=False)
 
     def external_update(self, updated_state):
         pass
 
 
-class ServerConnection(Protocol):
-    def __init__(self, context):
-        self.context = context
+class ServerAuth(Protocol):
+    def __init__(self, handler):
+        self.handler = handler
         self.authenticated = False
 
     def connectionMade(self):
-        self.context.event_handler.add_task(self.context.client_state_handler.update_status, True, False)
+        self.handler.event_handler.add_task(self.handler.client_state_handler.update_status, True, False)
 
     def connectionLost(self, reason=ConnectionDone):
         print("disconnect")
-        self.context.event_handler.add_task(self.context.client_state_handler.update_status, False, False)
+        self.handler.event_handler.add_task(self.handler.client_state_handler.update_status, False, False)
 
     def dataReceived(self, data):
         if self.authenticated:
@@ -68,3 +71,16 @@ class ServerConnection(Protocol):
             except json.JSONDecodeError:
                 print("Authentication packet was corrupted or in incorrect format")
 
+
+class ServerConnect(Protocol):
+    def __init__(self, handler):
+        self.handler = handler
+
+    def connectionMade(self):
+        pass
+
+    def connectionLost(self, reason=ConnectionDone):
+        pass
+
+    def dataReceived(self, data):
+        pass

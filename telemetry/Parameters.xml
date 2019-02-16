@@ -21,7 +21,9 @@ General reminder for editing: make sure to exclude potentially sensitive informa
         <Networking>
             <!-- TCP port used for establishing authenticated connection -->
             <ClientTCPPort>1776</ClientTCPPort>
-            <ServiceTCPPort>1777</ServiceTCPPort>
+            <ClientTCPAuthPort>1777</ClientTCPAuthPort>
+            <ServiceTCPPort>1778</ServiceTCPPort>
+            <ServiceTCPAuthPort>1779</ServiceTCPAuthPort>
             <!-- URL for the server for clients to connect to for receiving data, not included in public repo for security -->
             <ServerHost></ServerHost>
 
