@@ -23,9 +23,3 @@ class Packet:
         p.data = json_data["data"]
         p.timestamp = json_data["timestamp"]
         return p
-
-
-class Connection:
-    def __init__(self, addr, uptime_tick_at_creation):
-        self.addr = addr
-        self.last_packet_sent_tick = uptime_tick_at_creation

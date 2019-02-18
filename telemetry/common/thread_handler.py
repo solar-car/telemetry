@@ -5,7 +5,7 @@ from threading import Thread
 from queue import Queue
 
 
-class ThreadHandler:
+class EventHandler:
     def __init__(self, state_handler):
         self.state_handler = state_handler
         self.subscriptions = []

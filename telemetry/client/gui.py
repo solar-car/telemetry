@@ -4,13 +4,13 @@ from PySide2.QtUiTools import QUiLoader
 from PySide2.QtCore import Qt
 import PySide2.QtWidgets as Widgets
 
-from common.state_handler import Subscriber
+from common.thread_handler import Subscriber
 
 
 class UserInterface(Thread, Subscriber):
-    def __init__(self, event_handler, client_state_handler, modules_init, settings):
+    def __init__(self, thread_handler, client_state_handler, modules_init, settings):
         Thread.__init__(self)
-        self.event_handler = event_handler
+        self.thread_handler = thread_handler
         self._client_state_handler = client_state_handler
         self.cached_client_state_handler = None  # Safe to access freely
         self.modules_init = modules_init
@@ -108,4 +108,4 @@ class UserInterface(Thread, Subscriber):
     def handle_password_entry(self):
         data = self.password_entry.text()
         self.password_box.close()
-        self.event_handler.add_task(self._client_state_handler.update_credentials, data)
+        self.thread_handler.add_task(self._client_state_handler.update_credentials, data)

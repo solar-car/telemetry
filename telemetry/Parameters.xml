@@ -24,20 +24,12 @@ General reminder for editing: make sure to exclude potentially sensitive informa
             <ClientTCPAuthPort>1777</ClientTCPAuthPort>
             <ServiceTCPPort>1778</ServiceTCPPort>
             <ServiceTCPAuthPort>1779</ServiceTCPAuthPort>
+            
             <!-- URL for the server for clients to connect to for receiving data, not included in public repo for security -->
             <ServerHost></ServerHost>
-
             <ClientDebugHost>127.0.0.1</ClientDebugHost>
             <ServiceDebugHost>127.0.0.2</ServiceDebugHost>
             <ServerDebugHost>127.0.0.3</ServerDebugHost>
-
-            <ClientAuthenticationTimeout>10</ClientAuthenticationTimeout>
-            <PacketSendInterval>1</PacketSendInterval>
-            <SendDataInterval>1</SendDataInterval>
-            <ClientHeartbeatSendInterval>1</ClientHeartbeatSendInterval>
-            <CheckInactiveConnectionsInterval>10</CheckInactiveConnectionsInterval>
-            <MaxIntervalBeforeDisconnect>10</MaxIntervalBeforeDisconnect>
-
         </Networking>
         <Security>
             <!--Possible modes are "Disabled", "Enabled" (password)

@@ -8,13 +8,13 @@ from twisted.internet.error import ConnectionDone
 from twisted.internet.endpoints import connectProtocol, TCP4ClientEndpoint
 
 from common.network import Packet, AuthenticationResult
-from common.state_handler import Subscriber
+from common.thread_handler import Subscriber
 
 
 class ClientNetworkingHandler(Thread, Subscriber):
-    def __init__(self, event_handler, client_state_handler, settings):
+    def __init__(self, thread_handler, client_state_handler, settings):
         Thread.__init__(self)
-        self.event_handler = event_handler
+        self.thread_handler = thread_handler
         self.client_state_handler = client_state_handler
         
         # General networking settings
@@ -23,7 +23,6 @@ class ClientNetworkingHandler(Thread, Subscriber):
         self.server_host = self.settings["ServerDebugHost"]
         self.connection_tcp_port = self.settings["ClientTCPPort"]
         self.auth_tcp_port = self.settings["ClientTCPAuthPort"]
-        self.client_authentication_timeout = self.settings["ClientAuthenticationTimeout"]
 
         self.authentication_attempts = 0
         self.authentication_state = "not authenticated"
@@ -48,11 +47,11 @@ class ServerAuth(Protocol):
         self.authenticated = False
 
     def connectionMade(self):
-        self.handler.event_handler.add_task(self.handler.client_state_handler.update_status, True, False)
+        self.handler.thread_handler.add_task(self.handler.client_state_handler.update_status, True, False)
 
     def connectionLost(self, reason=ConnectionDone):
         print("disconnect")
-        self.handler.event_handler.add_task(self.handler.client_state_handler.update_status, False, False)
+        self.handler.thread_handler.add_task(self.handler.client_state_handler.update_status, False, False)
 
     def dataReceived(self, data):
         if self.authenticated:

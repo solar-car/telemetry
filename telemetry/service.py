@@ -1,10 +1,12 @@
-from telemetry.service import ServiceNetworkingHandler
-from telemetry.service import ServiceStateHandler
+from common.thread_handler import ThreadHandler
+from service.service_network import ServiceNetworkingHandler
+from service.service_state import ServiceStateHandler
 
 
 class TelemetryService:
     def __init__(self):
         self.state_handler = ServiceStateHandler()
+        self.thread_handler = ThreadHandler()
 
         self.networking_handler = ServiceNetworkingHandler(self.state_handler)
         self.networking_handler.start()

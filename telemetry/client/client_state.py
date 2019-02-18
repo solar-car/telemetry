@@ -8,7 +8,7 @@ from common.auth import Credentials, Authentication
 # None of the methods of this class should be called by a non-main thread, but rather queued up in EventHandler
 class ClientStateHandler:
     """
-    Maintains the persistent "global" state and data of the application
+    Maintains data that needs to be accessed across threads
     """
     def __init__(self):
         # Data storage
@@ -22,7 +22,6 @@ class ClientStateHandler:
         # Flags that can only be deduced at runtime
         self.server_connection_status = False
         self.raspberry_pi_connection_status = False
-        self.rsa_key_exists = False
 
         self.create_modules(self.module_data)
 
@@ -57,21 +56,12 @@ class Module:
         for sensor in module_data:
             sensor_data = module_data[sensor]
             sensor_gpio_pin = sensor_data["gpio_pin"]
-            sensor_mode = sensor_data["mode"]
-            if sensor_mode == "input":
-                sensor_mode = Sensor.Mode.INPUT
-            elif sensor_mode == "output":
-                sensor_mode = Sensor.Mode.OUTPUT
             sensor_unit = sensor_data["unit"]
-            sensors.append(Sensor(sensor, sensor_gpio_pin, sensor_mode, sensor_unit))
+            sensors.append(Sensor(sensor, sensor_gpio_pin, sensor_unit))
         return sensors
 
 
 class Sensor:
-    class Mode(Enum):
-        INPUT = 0
-        OUTPUT = 1
-
     class Status(Enum):
         OPERATIONAL = "Operational"
         NON_OPERATIONAL = "?"
@@ -81,22 +71,18 @@ class Sensor:
         memo[id(self)] = copy
         copy.name = deepcopy(self.name)
         copy.gpio_pin = deepcopy(self.gpio_pin, memo)
-        copy.mode = deepcopy(self.mode, memo)
         copy.unit = deepcopy(self.unit, memo)
         copy.status = deepcopy(self.status, memo)
         copy.value = deepcopy(self.value, memo)
         copy.gui_reference = self.gui_reference
         return copy
 
-    def __init__(self, name="", gpio_pin=0, mode=Mode.INPUT, unit="",
+    def __init__(self, name="", gpio_pin=0, unit="",
                  status="Operational", value=0, gui_reference=None):
         self.name = name
         self.gpio_pin = gpio_pin
-        self.mode = mode
         self.unit = unit
         self.status = status
         self.value = value
         self.gui_reference = gui_reference
 
-    def get_current_pin_value(self):
-        pass
