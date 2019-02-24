@@ -20,8 +20,7 @@ class ClientStateHandler:
         self.settings = Parser.parse_xml("Settings")
 
         # Flags that can only be deduced at runtime
-        self.server_connection_status = False
-        self.raspberry_pi_connection_status = False
+        self.connection_status = False
 
         self.create_modules(self.module_data)
 

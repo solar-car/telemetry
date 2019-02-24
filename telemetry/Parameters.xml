@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<!--
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-General reminder for editing: make sure to exclude potentially sensitive information before pushing commit to public repo
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
--->
 <Parameters>
+
     <Modules>
         <DHT11>
             <Temperature mode="Input" unit="C">4</Temperature>
@@ -17,24 +13,13 @@ General reminder for editing: make sure to exclude potentially sensitive informa
     </Modules>
 
     <Settings>
-        <!-- In general, any "interval" or "timeout" setting implies time in seconds -->
         <Networking>
-            <!-- TCP port used for establishing authenticated connection -->
-            <ClientTCPPort>1776</ClientTCPPort>
-            <ClientTCPAuthPort>1777</ClientTCPAuthPort>
-            <ServiceTCPPort>1778</ServiceTCPPort>
-            <ServiceTCPAuthPort>1779</ServiceTCPAuthPort>
-            
-            <!-- URL for the server for clients to connect to for receiving data, not included in public repo for security -->
-            <ServerHost></ServerHost>
+            <!-- TCP ports -->
+            <ConnectionPort>1776</ConnectionPort>
+            <AuthenticationPort>1777</AuthenticationPort>
             <ClientDebugHost>127.0.0.1</ClientDebugHost>
             <ServiceDebugHost>127.0.0.2</ServiceDebugHost>
-            <ServerDebugHost>127.0.0.3</ServerDebugHost>
         </Networking>
-        <Security>
-            <!--Possible modes are "Disabled", "Enabled" (password)
-                Note that changing this will only work if the server is configured to the same mode as specified.-->
-            <PasswordAuthentication>Enabled</PasswordAuthentication>
-        </Security>
     </Settings>
+
 </Parameters>

@@ -70,56 +70,6 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="QLabel" name="label">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>30</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>25</height>
-          </size>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">background-color : lightgray</string>
-         </property>
-         <property name="text">
-          <string> Server connection:</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="server_connection_status">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>25</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>25</height>
-          </size>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">color : red</string>
-         </property>
-         <property name="text">
-          <string>Not connected</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item>
         <widget class="QLabel" name="label_3">
          <property name="minimumSize">
           <size>
@@ -137,12 +87,12 @@
           <string notr="true">background-color : lightgray</string>
          </property>
          <property name="text">
-          <string> Raspberry Pi connection:</string>
+          <string> Connection:</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="pi_connection_status">
+        <widget class="QLabel" name="connection_status">
          <property name="minimumSize">
           <size>
            <width>0</width>

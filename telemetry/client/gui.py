@@ -8,24 +8,24 @@ from common.thread_handler import Subscriber
 
 
 class UserInterface(Thread, Subscriber):
-    def __init__(self, thread_handler, client_state_handler, modules_init, settings):
+    def __init__(self, context, modules_init):
         Thread.__init__(self)
-        self.thread_handler = thread_handler
-        self._client_state_handler = client_state_handler
-        self.cached_client_state_handler = None  # Safe to access freely
+        self.context = context
+        self.thread_handler = context.thread_handler
+        self.state_handler = context.state_handler
+        self.cached_state_handler = None  # Safe to access freely
         self.modules_init = modules_init
-        self.settings = settings
+        self.settings = context.state_handler.settings
 
     # Workaround instead of initializing in __init__ to reconcile Python's threading API and QT
     def initialize_qt(self):
         self.qt_app = Widgets.QApplication()
-        self.qt_app.aboutToQuit.connect(self._client_state_handler.quit)
+        self.qt_app.aboutToQuit.connect(self.state_handler.quit)
 
         # Getting reference to GUI items from main_window.ui so that they can be manipulated programmatically
         self.main_window = QUiLoader().load("client/main_window.ui")
-        self.pi_connection_status_widget = self.main_window.findChild(Widgets.QLabel, "pi_connection_status")
-        self.server_connection_status_widget = self.main_window.findChild(Widgets.QLabel,
-                                                                          "server_connection_status")
+        self.connection_status_widget = self.main_window.findChild(Widgets.QLabel, "connection_status")
+
         self.module_tree_widget = self.main_window.findChild(Widgets.QTreeWidget, "module_tree")
         self.menu_readme_action = self.main_window.findChild(Widgets.QAction, "open_readme")
         self.menu_readme_action.triggered.connect(lambda: print("menu action triggered placeholder"))
@@ -43,11 +43,12 @@ class UserInterface(Thread, Subscriber):
 
     def run(self):
         self.initialize_qt()
+        self.thread_handler.add_task(self.context.initialize_networking)
         self.qt_app.exec_()
 
     def external_update(self, updated_state):
-        self.cached_client_state_handler = updated_state
-        self.update_module_tree(self.cached_client_state_handler.modules)
+        self.cached_state_handler = updated_state
+        self.update_module_tree(self.cached_state_handler.modules)
         self.update_extra_gui_elements()
         print("external update triggered")
 
@@ -90,22 +91,15 @@ class UserInterface(Thread, Subscriber):
                 sensor.gui_reference.setData(4, Qt.ItemDataRole.DisplayRole, sensor.status)
 
     def update_extra_gui_elements(self):
-        if self.cached_client_state_handler.raspberry_pi_connection_status:
-            self.pi_connection_status_widget.setText("Connected")
-            self.pi_connection_status_widget.setStyleSheet("color: green")
-        elif not self.cached_client_state_handler.raspberry_pi_connection_status:
-            self.pi_connection_status_widget.setText("Not connected")
-            self.pi_connection_status_widget.setStyleSheet("color: red")
-
-        if self.cached_client_state_handler.server_connection_status:
-            self.server_connection_status_widget.setText("Connected")
-            self.server_connection_status_widget.setStyleSheet("color: green")
-        elif not self.cached_client_state_handler.server_connection_status:
-            self.server_connection_status_widget.setText("Not connected")
-            self.server_connection_status_widget.setStyleSheet("color: red")
+        if self.cached_state_handler.connection_status:
+            self.connection_status_widget.setText("Connected")
+            self.connection_status_widget.setStyleSheet("color: green")
+        elif not self.cached_state_handler.connection_status:
+            self.connection_status_widget.setText("Not connected")
+            self.connection_status_widget.setStyleSheet("color: red")
 
     # Return the entered password value in the password box and close it
     def handle_password_entry(self):
         data = self.password_entry.text()
         self.password_box.close()
-        self.thread_handler.add_task(self._client_state_handler.update_credentials, data)
+        self.thread_handler.add_task(self.state_handler.update_credentials, data)

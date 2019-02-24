@@ -6,7 +6,7 @@ from Crypto.Protocol.KDF import PBKDF2
 from Crypto import Random
 
 # Reminder: I am not a cryptographer and can't guarantee any of these implementations are 100% secure. Their intended
-# purpose is mostly to add an extra barrier to prevent random unauthorized connections to the server, and not to
+# purpose is mostly to add an extra barrier to prevent random unauthorized connections to the service, and not to
 # handle sensitive information. Also, keep in mind I mostly did this part for fun, not out of any real need.
 
 
